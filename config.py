@@ -4,7 +4,7 @@ import argparse
 def args_config_predict():
     parser = argparse.ArgumentParser(description='predict demo')
     # model
-    parser.add_argument('--model_name', type=str, default='poisson2d_5_v2.t7', help='the model name')  # [**]
+    parser.add_argument('--model_name', type=str, default='test_log.t7', help='the model name')  # [**]
     parser.add_argument('--model_show', type=int, default='0', help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default='1', help='the input data channels')
     parser.add_argument('--img_n_classes', type=int, default='1', help='the ouput data classes')
@@ -21,7 +21,7 @@ def args_config_predict():
     parser.add_argument('--Subimg_size_y', type=int, default='256', help='the Subimg_size_y')
     # mask
     parser.add_argument('--maskname', type=str, default='poisson2d', help='gaussian1d, gaussian2d, poisson2d')  # [**]
-    parser.add_argument('--maskperc', type=int, default='5', help='1,5,10,20,30,40,50')  # [**]
+    parser.add_argument('--maskperc', type=int, default='10', help='1,5,10,20,30,40,50')  # [**]
     # predict config
     parser.add_argument('--test_batch_size', type=int, default='8', help='test batch size ')
     # save
@@ -54,8 +54,8 @@ def args_config():
     parser.add_argument('--maskperc', type=int, default='10', help='1,5,10,20,30,40,50')  # [**]
     # train config
     parser.add_argument('--epochs', type=int, default='100', help='train epoch ')  # [**]
-    parser.add_argument('--lr', type=float, default='1e-3', help='train learning rate ')  # [**]
-    parser.add_argument('--batch_size', type=int, default='16', help='train batch size ')
+    parser.add_argument('--lr', type=float, default='1e-2', help='train learning rate ')  # [**]
+    parser.add_argument('--batch_size', type=int, default='8', help='train batch size ')
     return parser.parse_args()
 
 
