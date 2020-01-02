@@ -1,7 +1,7 @@
 from model import unet, FeatureExtractor
 from data import generate_traindata, get_mask, get_test_image
 from config import args_config
-from utils import get_para_log
+from utils import get_para_log, get_model
 
 import torch
 import torch.nn as nn
@@ -49,7 +49,7 @@ def main_train():
     # ==================================== DEFINE MODEL ==================================== #
     print('[*] define model ... ')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    my_net_G = unet.UNet(n_channels=args_.img_n_channels, n_classes=args_.img_n_classes)
+    my_net_G = get_model(model_name=args_.model, n_channels=args_.img_n_channels, n_classes=args_.img_n_classes)
     demo_input = torch.rand(2, 1, 256, 256)
     writer.add_graph(my_net_G, input_to_model=demo_input)
     my_net_G.to(device)
