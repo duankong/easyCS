@@ -121,18 +121,18 @@ def get_test_image(x_data, y_data, num=20):
 
 
 if __name__ == '__main__':
-    # mask_name = "poisson2d"
-    # mask_perc = 5
-    # # x, y = generate_traindata("17782", 1, 5, mask_name=mask_name, mask_perc=mask_perc, verbose=1)
-    #
-    # img = cv2.imread(os.path.join("17782", r"17782_" + "%05d.tif" % 1), cv2.IMREAD_GRAYSCALE)
-    # imgResize = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
-    # mask = get_mask(mask_name, mask_perc)
-    # show_fft_(imgResize / 255, mask)
+    mask_name = "poisson2d"
+    mask_perc = 1
+    # x, y = generate_traindata("17782", 1, 5, mask_name=mask_name, mask_perc=mask_perc, verbose=1)
 
-    print('[*] run basic configs ... ')
-    args = args_config_predict()
-    print('[*] loading mask ... ')
-    mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="mask")
-    print('[*] load data ... ')
-    [x, y] = generate_bigimage("../data/17782/", indx=20, mask=mask, verbose=1)
+    img = cv2.imread(os.path.join("17782", r"17782_" + "%05d.tif" % 1), cv2.IMREAD_GRAYSCALE)
+    imgResize = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
+    mask = get_mask(mask_name, mask_perc)
+    show_fft_(imgResize / 255, mask)
+    #
+    # print('[*] run basic configs ... ')
+    # args = args_config_predict()
+    # print('[*] loading mask ... ')
+    # mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="mask")
+    # print('[*] load data ... ')
+    # [x, y] = generate_bigimage("../data/17782/", indx=20, mask=mask, verbose=1)

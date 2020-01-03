@@ -32,7 +32,7 @@ def psnr(x_good, x_bad):
     x_bad = x_bad.squeeze()
 
     if x_good.ndim == 2:
-        psnr_res = skimage.measure.compare_psnr(x_good, x_bad, 1)
+        PSNR_res = skimage.measure.compare_psnr(x_good, x_bad, 1)
 
     if x_good.ndim == 3:
         psnr_all = 0
@@ -40,9 +40,8 @@ def psnr(x_good, x_bad):
             img1 = x_good[indx, :, :]
             img2 = x_bad[indx, :, :]
             psnr_all += skimage.measure.compare_psnr(img1, img2, 1)
-        psnr_res = psnr_all / x_good.shape[0]
-
-    return psnr_res
+        PSNR_res = psnr_all / x_good.shape[0]
+    return PSNR_res
 
 
 if __name__ == "__main__":
