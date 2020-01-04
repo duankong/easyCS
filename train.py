@@ -77,6 +77,7 @@ def main_train():
     if args_.model_show:
         summary(my_net_G, input_size=(1, args_.img_size_x, args_.img_size_y))
     # ==================================== DEFINE TRAIN OPTS ==================================== #
+
     print('[*] define training options ... ')
     optimizer_G = optim.Adam(my_net_G.parameters(), lr=args_.lr)  # optimize all net parameters
     # ==================================== DEFINE LOSS ==================================== #

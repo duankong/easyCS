@@ -9,6 +9,8 @@ def get_model(model_name, n_channels, n_classes):
         net = nestedUnet.NestedUNet(n_channels=n_channels, n_classes=n_classes, deepsupervision=False)
     elif model_name == "Unet_res":
         net = unet.UNet_res(n_channels=n_channels, n_classes=n_classes)
+    elif model_name == "Unet_conv":
+        net = unet.UNet_conv(n_channels=n_channels, n_classes=n_classes, bilinear=True, Measure_return=False)
     else:
         return 0
     return net
