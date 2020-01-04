@@ -76,7 +76,7 @@ class UNet_conv(nn.Module):
 
     def __init__(self, n_channels, n_classes, bilinear=True, Measure_return=False):
         super(UNet_conv, self).__init__()
-        num_feature = 3
+        num_feature = 2
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
