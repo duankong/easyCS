@@ -11,7 +11,6 @@ class UNet(nn.Module):
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
-
         self.inc = DoubleConv(n_channels, num_feature)
         self.down1 = Down(num_feature, num_feature * 2)
         self.down2 = Down(num_feature * 2, num_feature * 4)
@@ -34,8 +33,43 @@ class UNet(nn.Module):
         x = self.up3(x, x2)
         x = self.up4(x, x1)
         logits = self.outc(x)
-
         return logits
+
+
+class UNet_res(nn.Module):
+
+    def __init__(self, n_channels, n_classes, bilinear=True):
+        super(UNet_res, self).__init__()
+        num_feature = 2
+        self.n_channels = n_channels
+        self.n_classes = n_classes
+        self.bilinear = bilinear
+        self.inc = DoubleConv(n_channels, num_feature)
+        self.down1 = Down(num_feature, num_feature * 2)
+        self.down2 = Down(num_feature * 2, num_feature * 4)
+        self.down3 = Down(num_feature * 4, num_feature * 8)
+        self.down4 = Down(num_feature * 8, num_feature * 8)
+        self.up1 = Up(num_feature * 16, num_feature * 4, bilinear)
+        self.up2 = Up(num_feature * 8, num_feature * 2, bilinear)
+        self.up3 = Up(num_feature * 4, num_feature, bilinear)
+        self.up4 = Up(num_feature * 2, num_feature, bilinear)
+        self.outc = nn.Conv2d(num_feature, n_channels, kernel_size=1)
+        self.sigmod = nn.Sigmoid()
+
+    def forward(self, x):
+        input = x
+        x1 = self.inc(x)
+        x2 = self.down1(x1)
+        x3 = self.down2(x2)
+        x4 = self.down3(x3)
+        x5 = self.down4(x4)
+        x = self.up1(x5, x4)
+        x = self.up2(x, x3)
+        x = self.up3(x, x2)
+        x = self.up4(x, x1)
+        out = torch.add(self.outc(x), input)
+        out = self.sigmod(out)
+        return out
 
 
 class DoubleConv(nn.Module):

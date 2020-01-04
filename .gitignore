@@ -1,6 +1,8 @@
 checkpoint/
+__pycache__/
 data/17782/
-data/__pycache__/*
-data/predict/*
+data/__pycache__/
+data/predict/
+model/__pycache__/
 runs/
 .idea/

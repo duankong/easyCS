@@ -4,11 +4,11 @@ import argparse
 def args_config():
     parser = argparse.ArgumentParser(description='train demo')
     # model
-    parser.add_argument('--model', type=str, default='nestedUnet', help='the model name：Unet nestedUnet')  # [**]
-    parser.add_argument('--model_name', type=str, default='test_nestedUnet.t7', help='the model name')  # [**]
-    parser.add_argument('--model_log', type=str, default='test_nestedUnet', help='the model log file for check')  # [**]
+    parser.add_argument('--model', type=str, default='Unet_res', help='the model name：Unet nestedUnet Unet_res')  # [**]
+    parser.add_argument('--model_name', type=str, default='test_Unet_res.t7', help='the model name')  # [**]
+    parser.add_argument('--model_log', type=str, default='test_Unet_res', help='the model log file for check')  # [**]
     parser.add_argument('--model_save', type=int, default='1', help='the model is save or not')
-    parser.add_argument('--model_show', type=int, default='0', help='the model is show  or not')
+    parser.add_argument('--model_show', type=int, default='1', help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default='1', help='the input data channels')
     parser.add_argument('--img_n_classes', type=int, default='1', help='the ouput data classes')
     # loss
@@ -34,7 +34,7 @@ def args_config():
 def args_config_predict():
     parser = argparse.ArgumentParser(description='predict demo')
     # model
-    parser.add_argument('--model', type=str, default='Unet', help='the model name')  # [**]
+    parser.add_argument('--model', type=str, default='UNet_res', help='the model name：Unet nestedUnet UNet_res')  # [**]
     parser.add_argument('--model_name', type=str, default='test_log.t7', help='the model name')  # [**]
     parser.add_argument('--model_show', type=int, default='0', help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default='1', help='the input data channels')
