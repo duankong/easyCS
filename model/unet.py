@@ -107,7 +107,7 @@ class UNet_conv(nn.Module):
         out = self.outc(x)
 
         if self.Measure_return:
-            return m_img, out
+            return out, m_img
         else:
             return out
 

@@ -30,6 +30,7 @@ def main_train():
     mask = get_mask(mask_name=args_.maskname, mask_perc=args_.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
     [x, y] = generate_traindata(args_.data_path, args_.data_star_num, args_.data_end_num, mask, verbose=0)
+    x = y
     x_data = torch.from_numpy(x[:])
     y_data = torch.from_numpy(y[:])
     x_data, y_data = x_data.float(), y_data.float()
@@ -107,6 +108,7 @@ def main_train():
             optimizer_G.step()  # apply gradients
             iter_num = (epoch) * len(train_loader) * args_.batch_size + step * args_.batch_size
             writer.add_scalar("train_loss", g_loss.cpu().data.numpy(), iter_num)
+
             if step % 2 == 0:
                 with torch.no_grad():
                     test_output = my_net_G(x_test)
@@ -121,6 +123,7 @@ def main_train():
                 writer.add_scalar("test/test_MSE", mse_num, iter_num)
                 writer.add_scalar("test/test_PSNR", psnr_num, iter_num)
                 print(log)
+
             if g_loss.cpu().data.numpy() < best_loss and step % 20 == 0 and args_.model_save:
                 # 保存模型示例代码
                 best_loss = g_loss.cpu().data.numpy()
