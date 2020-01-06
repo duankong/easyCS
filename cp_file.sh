@@ -36,4 +36,5 @@ mkdir $2
   }
 }
 e $1 $2
+cp $1/.gitignore $2/
 echo  "[*] CP Done!"

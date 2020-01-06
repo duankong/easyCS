@@ -19,8 +19,6 @@ def get_para_log(args_):
     log += "\n[*] Train\n\n"
     log += "epochs={}\tlr={}\tbatch_size={}\n".format(args_.epochs, args_.lr, args_.batch_size)
     log += "alpha={}\tgamma={}\tbeta={}\n\n".format(args_.alpha, args_.gamma, args_.beta)
-
-
     return log
 
 
