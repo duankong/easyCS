@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 D:/anconda3/python.exe -u  G:/lxb/desktop/easyCS/train.py \
 --data_star_num 1 --data_end_num 1000 \
 --maskname poisson2d --maskperc  5  \

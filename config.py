@@ -12,10 +12,6 @@ def args_config():
     parser.add_argument('--model_show', type=bool, default=False, help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default=1, help='the input data channels')
     parser.add_argument('--img_n_classes', type=int, default=1, help='the ouput data classes')
-    # loss
-    parser.add_argument('--alpha', type=float, default=15, help='alpha = 15')
-    parser.add_argument('--gamma', type=float, default=0.1, help='gamma = 0.1')
-    parser.add_argument('--beta', type=float, default=0.0025, help='beta = 0.0025')
     # train data
     parser.add_argument('--data_path', type=str, default='./data/17782/', help='data path')
     parser.add_argument('--data_star_num', type=int, default=1, help='the first pic num')  # [**]
@@ -25,6 +21,13 @@ def args_config():
     # mask
     parser.add_argument('--maskname', type=str, default='poisson2d', help='gaussian1d, gaussian2d, poisson2d')  # [**]
     parser.add_argument('--maskperc', type=int, default=10, help='1,5,10,20,30,40,50')  # [**]
+    # loss
+    parser.add_argument('--loss_mse_only', type=bool, default=False, help='Only use Mse as the loss')
+    parser.add_argument('--loss_ssim', type=bool, default=True, help='add SSIM into the loss')
+    parser.add_argument('--loss_vgg', type=bool, default=True, help='add vggNet into the loss')
+    parser.add_argument('--alpha', type=float, default=15, help='alpha = 15')
+    parser.add_argument('--gamma', type=float, default=0.1, help='gamma = 0.1')
+    parser.add_argument('--beta', type=float, default=0.0025, help='beta = 0.0025')
     # train config
     parser.add_argument('--epochs', type=int, default=100, help='train epoch ')  # [**]
     parser.add_argument('--lr', type=float, default=1e-2, help='initial learning rate')  # [**]
