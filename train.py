@@ -64,9 +64,9 @@ def main_train():
             start_epoch = checkpoint['epoch']
             best_loss = checkpoint['best_loss']
             print("==> Loaded checkpoint '{}' (trained for {} epochs,the best loss is {:.6f})".format(args.model_name,
-                                                                                                     checkpoint[
-                                                                                                         'epoch'],
-                                                                                                     best_loss))
+                                                                                                      checkpoint[
+                                                                                                          'epoch'],
+                                                                                                      best_loss))
         except FileNotFoundError:
             start_epoch = 0
             best_loss = 10
@@ -114,9 +114,9 @@ def main_train():
                     y_test.cpu().data.numpy(), test_output.cpu().data.numpy())
                 mse_num = skimage.metrics.mean_squared_error(
                     y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
-                log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d\}]".format(
-                    epoch + 1, args.epochs, (step + 1) * args.batch_size, len(train_loader) * args.batch_size
-                )
+                log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
+                                                                                (step + 1) * args.batch_size,
+                                                                                len(train_loader) * args.batch_size)
                 # TensorboardX log and print in command line
                 writer.add_scalar("train_loss", g_loss.cpu().data.numpy(), iter_num)
                 log += " || TRAIN [loss: {:.6f}]".format(g_loss.cpu().data.numpy())
