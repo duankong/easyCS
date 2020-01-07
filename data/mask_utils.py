@@ -132,10 +132,10 @@ if __name__ == '__main__':
     mask_perc = 1, 5, 10, 20, 30, 40, 50
     mask = list()
     for i, mask_perc in enumerate(mask_perc):
-        mask.append(get_mask(mask_name[2], mask_perc, mask_path="mask", verbose=0))
+        mask.append(get_mask(mask_name[0], mask_perc, mask_path="mask", verbose=0))
 
     img = cv2.imread(os.path.join("17782", r"17782_" + "%05d.tif" % 1), cv2.IMREAD_GRAYSCALE)
     img = cv2.imread("lena.jpg")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
     imgResize = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
-    show_dct_mask(imgResize, mask[1])
+    show_dct_mask(imgResize-128, mask[6])
