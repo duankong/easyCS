@@ -38,7 +38,8 @@ def args_config():
 def args_config_predict():
     parser = argparse.ArgumentParser(description='predict demo')
     # model
-    parser.add_argument('--model', type=str, default='UNet_res', help='the model name：Unet nestedUnet UNet_res')  # [**]
+    parser.add_argument('--model', type=str, default='UNet_res',
+                        help='the model name：Unet nestedUnet UNet_res Unet_conv')  # [**]
     parser.add_argument('--model_name', type=str, default='test_log.t7', help='the model name')  # [**]
     parser.add_argument('--model_show', type=bool, default=False, help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default=1, help='the input data channels')

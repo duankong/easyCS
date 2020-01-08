@@ -30,7 +30,8 @@ def main_train():
     mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
     [x, y] = generate_traindata(args.data_path, args.data_star_num, args.data_end_num, mask, verbose=0)
-    x = y
+    if args.model == "Unet_conv":
+        x = y
     x_data = torch.from_numpy(x[:])
     y_data = torch.from_numpy(y[:])
     x_data, y_data = x_data.float(), y_data.float()
@@ -115,8 +116,8 @@ def main_train():
                 mse_num = skimage.metrics.mean_squared_error(
                     y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
                 log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
-                                                                                (step + 1) * args.batch_size,
-                                                                                len(train_loader) * args.batch_size)
+                                                                               (step + 1) * args.batch_size,
+                                                                               len(train_loader) * args.batch_size)
                 # TensorboardX log and print in command line
                 writer.add_scalar("train_loss", g_loss.cpu().data.numpy(), iter_num)
                 log += " || TRAIN [loss: {:.6f}]".format(g_loss.cpu().data.numpy())
