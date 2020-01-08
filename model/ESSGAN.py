@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torchsummary import summary
 
-fnum = 2
+fnum = 4
 
 
 class ESS_net(nn.Module):
