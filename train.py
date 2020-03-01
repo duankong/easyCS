@@ -1,4 +1,4 @@
-from model import unet, FeatureExtractor
+from model import FeatureExtractor
 from data import generate_traindata, get_mask, get_test_image
 from config import args_config
 from utils import get_para_log, get_model, ssim
