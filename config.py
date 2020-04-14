@@ -6,8 +6,8 @@ def args_config():
     # model
     parser.add_argument('--model', type=str, default='Essnet',
                         help='the model name：Unet nestedUnet Unet_res Unet_conv Essnet')  # [**]
-    parser.add_argument('--model_name', type=str, default='Essnet_test3.t7', help='the model name')  # [**]
-    parser.add_argument('--model_log', type=str, default='Essnet_test3', help='the model log file for check')  # [**]
+    parser.add_argument('--model_name', type=str, default='Essnet_test4.t7', help='the model name')  # [**]
+    parser.add_argument('--model_log', type=str, default='Essnet_test4', help='the model log file for check')  # [**]
     parser.add_argument('--model_save', type=bool, default=False, help='the model is save or not')
     parser.add_argument('--model_show', type=bool, default=False, help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default=1, help='the input data channels')
