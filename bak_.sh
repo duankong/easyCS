@@ -1,1 +1,1 @@
-sh cp_file.sh /g/Desktop/easyCS /g/Desktop/easyCSbak
+sh cp_file.sh /e/Desktop/easyCS /e/Desktop/easyCSbak

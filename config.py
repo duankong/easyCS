@@ -15,7 +15,7 @@ def args_config():
     # train data
     parser.add_argument('--data_path', type=str, default='./data/17782/', help='data path')
     parser.add_argument('--data_star_num', type=int, default=1, help='the first pic num')  # [**]
-    parser.add_argument('--data_end_num', type=int, default=201, help='the end pic num')  # [**]
+    parser.add_argument('--data_end_num', type=int, default=101, help='the end pic num')  # [**]
     parser.add_argument('--img_size_x', type=int, default=256, help='the input data size x(row)')
     parser.add_argument('--img_size_y', type=int, default=256, help='the input data size y(col)')
     # mask
