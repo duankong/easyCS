@@ -100,14 +100,14 @@ def main_train():
             g_img = my_net_G(train_x)  # get output
             # Loss measures generator's ability to fool the discriminator
             loss_g_mse = loss_mse(g_img, train_y)
-            if args.loss_mse_only == True:
+            if args.loss_mse_only == 1:
                 g_loss = loss_g_mse
             else:
                 g_loss = args.alpha * loss_g_mse
-                if args.loss_ssim == True:
+                if args.loss_ssim == 1:
                     loss_g_ssim = 1 - ssim(g_img, train_y)
                     g_loss += args.gamma * loss_g_ssim
-                if args.loss_vgg == True:
+                if args.loss_vgg == 1:
                     loss_g_vgg = loss_mse(vgg_Feature_model(g_img), vgg_Feature_model(train_y))
                     g_loss += args.beta * loss_g_vgg
             g_loss.backward()  # backpropagation, compute gradients
@@ -129,10 +129,10 @@ def main_train():
                 ## Train detail loss
                 writer.add_scalar("train/MSE_loss", loss_g_mse.cpu().data.numpy(), iter_num)
                 log += " [MSE: {:.6f}]".format(loss_g_mse.cpu().data.numpy())
-                if args.loss_mse_only == False and args.loss_ssim == True:
+                if args.loss_mse_only == 0 and args.loss_ssim == 1:
                     writer.add_scalar("train/SSIM_loss", loss_g_ssim.cpu().data.numpy(), iter_num)
                     log += "  [SSIM: {:.4f}]".format(loss_g_ssim.cpu().data.numpy())
-                if args.loss_mse_only == False and args.loss_vgg == True:
+                if args.loss_mse_only == 0 and args.loss_vgg == 1:
                     writer.add_scalar("train/VGG_loss", loss_g_vgg.cpu().data.numpy(), iter_num)
                     log += "  [VGG: {:.4f}]".format(loss_g_vgg.cpu().data.numpy())
                 ## Test loss
