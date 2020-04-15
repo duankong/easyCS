@@ -2,8 +2,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchsummary import summary
+from config import args_config
 
-fnum = 4
+args_ = args_config()
+if args_.test_model == True:
+    fnum = 4
+else:
+    fnum = 64
 
 
 class ESS_net(nn.Module):

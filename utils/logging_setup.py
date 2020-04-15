@@ -1,5 +1,6 @@
 import time
 from config import args_config
+import numpy as np
 
 
 def get_para_log(args_):
@@ -9,8 +10,8 @@ def get_para_log(args_):
     log += "Model name:\t{}\n".format(args_.model)
     log += "Model save:\t{}\n".format(args_.model_name)
     log += "Model log :\t{}\n".format(args_.model_log)
-    log += "Model show    ={:2d} || save   ={:2d}\n".format(args_.model_show, args_.model_save)
-    log += "Model channels={:2d} || classes={:2d}\n".format(args_.img_n_channels, args_.img_n_classes)
+    log += "Model show    ={} || save   ={}\n".format(args_.model_show, args_.model_save)
+    log += "Model channels={:1d} || classes={:1d}\n".format(args_.img_n_channels, args_.img_n_classes)
     log += "\n[*] Data\n\n"
     log += "Path      :\t{}\n".format(args_.data_path)
     log += "Image Num :\t{:5d} /{:5d}\n".format(args_.data_star_num, args_.data_end_num)
@@ -21,7 +22,7 @@ def get_para_log(args_):
     log += "MSE_only={}\tSSIM={}\tVGG={}\n".format(args_.loss_mse_only, args_.loss_ssim, args_.loss_vgg)
     log += "alpha(MSE)={}\tgamma(SSIM)={}\tbeta(VGG)={}\n".format(args_.alpha, args_.gamma, args_.beta)
     log += "\n[*] Train\n\n"
-    log += "epochs={}\tlr={}\tbatch_size={}\n\n".format(args_.epochs, args_.lr, args_.batch_size)
+    log += "epochs={}\tlr={}\tbatch_size={}\ttest_model={}\n\n".format(args_.epochs, args_.lr, args_.batch_size,args_.test_model)
     return log
 
 

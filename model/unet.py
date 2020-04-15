@@ -1,13 +1,20 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from config import args_config
+
+args_ = args_config()
+
+if args_.test_model == True:
+    num_feature = 2
+else:
+    num_feature = 64
 
 
 class UNet(nn.Module):
 
     def __init__(self, n_channels, n_classes, bilinear=True):
         super(UNet, self).__init__()
-        num_feature = 2
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
@@ -40,7 +47,6 @@ class UNet_res(nn.Module):
 
     def __init__(self, n_channels, n_classes, bilinear=True):
         super(UNet_res, self).__init__()
-        num_feature = 2
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear
@@ -76,7 +82,6 @@ class UNet_conv(nn.Module):
 
     def __init__(self, n_channels, n_classes, bilinear=True, Measure_return=False):
         super(UNet_conv, self).__init__()
-        num_feature = 1
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.bilinear = bilinear

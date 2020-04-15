@@ -1,11 +1,18 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
 from torch import nn
 from torch.nn import functional as F
 import torch
 from torchvision import models
 import torchvision
+from config import args_config
+
+args_ = args_config()
+
+if args_.test_model == True:
+    nb_filter = [1, 2, 4, 8, 16]
+else:
+    nb_filter = [32, 64, 128, 256, 512]
 
 
 class VGGBlock(nn.Module):
@@ -32,11 +39,7 @@ class VGGBlock(nn.Module):
 class UNet(nn.Module):
     def __init__(self, args):
         super().__init__()
-
         self.args = args
-
-        nb_filter = [32, 64, 128, 256, 512]
-
         self.pool = nn.MaxPool2d(2, 2)
         self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
@@ -75,8 +78,6 @@ class NestedUNet(nn.Module):
         self.n_channels = n_channels
         self.n_classes = n_classes
         self.deepsupervision = deepsupervision
-        nb_filter = [32, 64, 128, 256, 512]
-        nb_filter = [1, 2, 4, 8, 16]
         self.pool = nn.MaxPool2d(2, 2)
         self.up = nn.Upsample(scale_factor=2, mode='bilinear', align_corners=True)
 
