@@ -6,4 +6,4 @@ data/predict/
 model/__pycache__/
 runs/
 .idea/
-start.sh/
+start.sh
