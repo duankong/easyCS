@@ -10,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10, verbose=0):
+def generate_train_test_data(data_path, start_num, end_num, mask, testselect=7, verbose=0):
     prefix_Image = r"17782_"
     x = list()
     for i in range(start_num, end_num + 1):
