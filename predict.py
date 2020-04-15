@@ -1,5 +1,5 @@
 from model import unet
-from data import generate_traindata, get_mask
+from data import generate_train_test_data, get_mask
 from config import args_config_predict
 
 import torch

@@ -1,7 +1,7 @@
 from model import FeatureExtractor
-from data import generate_traindata, get_mask, get_test_image
+from data import generate_train_test_data, get_mask, get_test_image
 from config import args_config
-from utils import get_para_log, get_model, ssim
+from utils import get_para_log, get_model, ssim, get_time
 
 import torch
 import torch.nn as nn
@@ -29,21 +29,24 @@ def main_train():
     print('[*] loading mask ... ')
     mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
-    [x, y] = generate_traindata(args.data_path, args.data_star_num, args.data_end_num, mask, verbose=0)
+    [x_train, y_train, x_test, y_test] = generate_train_test_data(args.data_path, args.data_star_num, args.data_end_num,
+                                                                  mask, testselect=10, verbose=0)
     if args.model == "Unet_conv":
-        x = y
-    x_data = torch.from_numpy(x[:])
-    y_data = torch.from_numpy(y[:])
-    x_data, y_data = x_data.float(), y_data.float()
-    x_data = x_data.unsqueeze(1)
-    y_data = y_data.unsqueeze(1)
+        x_train = y_train
+
+    x_train = torch.from_numpy(x_train[:]).float().unsqueeze(1)
+    y_train = torch.from_numpy(y_train[:]).float().unsqueeze(1)
+    x_test = torch.from_numpy(x_test[:]).float().unsqueeze(1)
+    y_test = torch.from_numpy(y_test[:]).float().unsqueeze(1)
+
     if torch.cuda.is_available():
-        x_data, y_data = x_data.cuda(), y_data.cuda()
+        x_train, y_train, x_test, y_test = x_train.cuda(), y_train.cuda(), x_test.cuda(), y_test.cuda()
         print('[*] ====> Running on GPU <==== [*]')
-    print("x_data shape is [{}],y_data shape is [{}]".format(x_data.shape, y_data.shape))
-    deal_dataset = Data.TensorDataset(x_data, y_data)
-    train_loader = Data.DataLoader(dataset=deal_dataset, batch_size=args.batch_size, shuffle=True)
-    x_test, y_test = get_test_image(x_data, y_data, 20)
+    print("x_data shape is [{}],y_data shape is [{}]".format(x_train.shape, y_train.shape))
+
+    train_loader = Data.DataLoader(dataset=Data.TensorDataset(x_train, y_train), batch_size=args.batch_size,
+                                   shuffle=True)
+
     img_grid_y = torchvision.utils.make_grid(y_test, nrow=5)
     img_grid_x = torchvision.utils.make_grid(x_test, nrow=5)
     writer.add_image('img_test/ground', img_grid_y)
@@ -87,6 +90,7 @@ def main_train():
     vgg_Feature_model = FeatureExtractor().to(device)
     # ==================================== TRAINING ==================================== #
     print('[*] start training ... ')
+    start_time = time.time()
     for epoch in range(start_epoch, args.epochs):
         for step, (train_x, train_y) in enumerate(
                 train_loader):  # gives batch data, normalize x when iterate train_loader
@@ -119,8 +123,10 @@ def main_train():
                                                                                (step + 1) * args.batch_size,
                                                                                len(train_loader) * args.batch_size)
                 # TensorboardX log and print in command line
+                ## Train total loss
                 writer.add_scalar("train_loss", g_loss.cpu().data.numpy(), iter_num)
                 log += " || TRAIN [loss: {:.6f}]".format(g_loss.cpu().data.numpy())
+                ## Train detail loss
                 writer.add_scalar("train/MSE_loss", loss_g_mse.cpu().data.numpy(), iter_num)
                 log += " [MSE: {:.6f}]".format(loss_g_mse.cpu().data.numpy())
                 if args.loss_mse_only == False and args.loss_ssim == True:
@@ -129,10 +135,18 @@ def main_train():
                 if args.loss_mse_only == False and args.loss_vgg == True:
                     writer.add_scalar("train/VGG_loss", loss_g_vgg.cpu().data.numpy(), iter_num)
                     log += "  [VGG: {:.4f}]".format(loss_g_vgg.cpu().data.numpy())
+                ## Test loss
                 writer.add_scalar("test/test_MSE", mse_num, iter_num)
                 log += " || TEST [MSE: {:.4f}]".format(mse_num)
                 writer.add_scalar("test/test_PSNR", psnr_num, iter_num)
                 log += " [PSNR: {:.4f}]".format(psnr_num)
+                ## time caculate
+                use_time = time.time() - start_time
+                ave_time = use_time / (
+                            (epoch - start_epoch) * len(train_loader) * args.batch_size + (step + 1) * args.batch_size)
+                resttime = ave_time * ((args.epochs - epoch) * len(train_loader) * args.batch_size + len(
+                    train_loader) * args.batch_size - (step + 1) * args.batch_size)
+                log += "  || Use time :{} Rest time :{}".format(get_time(use_time), get_time(resttime))
                 print(log)
 
             if g_loss.cpu().data.numpy() < best_loss and step % 20 == 0 and args.model_save:
@@ -147,6 +161,7 @@ def main_train():
                     os.mkdir('checkpoint')
                 torch.save(state, './checkpoint/' + args.model_name)
                 print("[*] Save checkpoints SUCCESS! || loss= {:.5f} epoch= {:03d}".format(best_loss, epoch + 1))
+        # show test every epoch
         img_grid = torchvision.utils.make_grid(test_output, nrow=5)
         writer.add_image('img_epoch', img_grid, global_step=epoch)
     writer.close()
