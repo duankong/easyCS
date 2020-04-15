@@ -22,7 +22,7 @@ def args_config():
     parser.add_argument('--maskname', type=str, default='poisson2d', help='gaussian1d, gaussian2d, poisson2d')  # [**]
     parser.add_argument('--maskperc', type=int, default=10, help='1,5,10,20,30,40,50')  # [**]
     # loss
-    parser.add_argument('--loss_mse_only', type=bool, default=True, help='Only use Mse as the loss')
+    parser.add_argument('--loss_mse_only', type=bool, default=False, help='Only use Mse as the loss')
     parser.add_argument('--loss_ssim', type=bool, default=True, help='add SSIM into the loss')
     parser.add_argument('--loss_vgg', type=bool, default=True, help='add vggNet into the loss')
     parser.add_argument('--alpha', type=float, default=15, help='alpha = 15')
