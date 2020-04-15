@@ -1,9 +1,20 @@
 # easyCS
 simple compressive sensing with Unet
 
-- [x] S ==>  FFT 
-- [x] M ==>  01
-- [x] R ==>  Unet
+- [x] Spare
+  
+  FFT 
+  
+- [x] MEASURE
+  
+  ['gaussian1d', 'gaussian2d', 'poisson2d']
+  
+- [x] Reconsitution
+
+  ['Unet', 'nestedUnet', 'Unet_res', 'Unet_conv', 'Essnet']
+ 
+ 
+
 ---
 ### env
 `python==3.6`
