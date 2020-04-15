@@ -39,7 +39,7 @@ def main_train():
     y_data = y_data.unsqueeze(1)
     if torch.cuda.is_available():
         x_data, y_data = x_data.cuda(), y_data.cuda()
-        print('====> Running on GPU <===')
+        print('[*] ====> Running on GPU <==== [*]')
     print("x_data shape is [{}],y_data shape is [{}]".format(x_data.shape, y_data.shape))
     deal_dataset = Data.TensorDataset(x_data, y_data)
     train_loader = Data.DataLoader(dataset=deal_dataset, batch_size=args.batch_size, shuffle=True)

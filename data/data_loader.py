@@ -1,5 +1,6 @@
 from data.mask_utils import get_mask
 from config import args_config_predict
+from config import args_config
 from data import get_Blocks, assembleBlocks
 
 import os
@@ -9,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def generate_traindata(data_path, start_num, end_num, mask, verbose=0):
+def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10, verbose=0):
     prefix_Image = r"17782_"
     x = list()
     for i in range(start_num, end_num + 1):
@@ -19,18 +20,28 @@ def generate_traindata(data_path, start_num, end_num, mask, verbose=0):
         img = cv2.imread(os.path.join(data_path, prefix_Image + "%05d.tif" % i), cv2.IMREAD_GRAYSCALE)
         imgResize = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
         x.append(imgResize)
-    X = list()
-    Y = list()
+    train_X = list()
+    train_Y = list()
+    test_X = list()
+    test_Y = list()
     for i in range(len(x)):
         x_t = to_bad_img(x[i] / 255, mask)
         y_t = np.array(x[i] / 255)
         x_t = np.resize(x_t, (1, x_t.shape[0], x_t.shape[1]))
         y_t = np.resize(y_t, (1, y_t.shape[0], x_t.shape[1]))
-        X.append(x_t)
-        Y.append(y_t)
-    X = np.concatenate(X, 0)
-    Y = np.concatenate(Y, 0)
-    return [X, Y]
+        if verbose >= 1:
+            print("num {}  ||  mod {} ".format(i, i % testselect))
+        if i % testselect > 0:
+            train_X.append(x_t)
+            train_Y.append(y_t)
+        else:
+            test_X.append(x_t)
+            test_Y.append(y_t)
+    train_X = np.concatenate(train_X, 0)
+    train_Y = np.concatenate(train_Y, 0)
+    test_X = np.concatenate(test_X, 0)
+    test_Y = np.concatenate(test_Y, 0)
+    return [train_X, train_Y, test_X, test_Y]
 
 
 def generate_bigimage(data_path, indx, mask, Subimg_size_x=256, Subimg_size_y=256, overlap_percent=0, verbose=0):
@@ -74,11 +85,19 @@ def get_test_image(x_data, y_data, num=20):
 
 
 if __name__ == '__main__':
-    mask_name = "poisson2d"
-    mask_perc = 1
+    # mask_name = "poisson2d"
+    # mask_perc = 1
+    # print('[*] run basic configs ... ')
+    # args = args_config_predict()
+    # print('[*] loading mask ... ')
+    # mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="mask")
+    # print('[*] load data ... ')
+    # [x, y] = generate_bigimage("../data/17782/", indx=20, mask=mask, verbose=1)
+    # =================================== BASIC CONFIGS =================================== #
     print('[*] run basic configs ... ')
-    args = args_config_predict()
+    args = args_config()
+    # ==================================== PREPARE DATA ==================================== #
     print('[*] loading mask ... ')
-    mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="mask")
+    mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="E:/Desktop/easyCS/data/mask/")
     print('[*] load data ... ')
-    [x, y] = generate_bigimage("../data/17782/", indx=20, mask=mask, verbose=1)
+    [x, y, a, b] = generate_train_test_data("E:/Desktop/easyCS/data/17782/", 1, 20, mask, verbose=0)
