@@ -28,9 +28,9 @@ def args_config():
     parser.add_argument('--img_size_x', type=int, default=256, help='the input data size x(row)')
     parser.add_argument('--img_size_y', type=int, default=256, help='the input data size y(col)')
     # mask
-    parser.add_argument('--maskname', type=str, default='poisson2d', choices=['gaussian1d, gaussian2d, poisson2d'],
+    parser.add_argument('--maskname', type=str, default='poisson2d', choices=['gaussian1d', 'gaussian2d', 'poisson2d'],
                         help='gaussian1d, gaussian2d, poisson2d')  # [**]
-    parser.add_argument('--maskperc', type=int, default=10, choices=['1,5,10,20,30,40,50'],
+    parser.add_argument('--maskperc', type=int, default=10, choices=[1, 5, 10, 20, 30, 40, 50],
                         help='1,5,10,20,30,40,50')  # [**]
     # loss
     parser.add_argument('--loss_mse_only', type=boolean_string, default=False, choices=[True, False],
