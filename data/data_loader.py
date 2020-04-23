@@ -44,6 +44,32 @@ def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10,
     return [train_X, train_Y, test_X, test_Y]
 
 
+def generate_test_data(data_path, start_num, end_num, mask, verbose=0):
+    prefix_Image = r"17782_"
+    x = list()
+    for i in range(start_num, end_num + 1):
+        if verbose >= 1:
+            print("[@data_loader] {} is loading".format(os.path.join(data_path, prefix_Image + "%05d.tif" % i)))
+        width = height = 256
+        img = cv2.imread(os.path.join(data_path, prefix_Image + "%05d.tif" % i), cv2.IMREAD_GRAYSCALE)
+        imgResize = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
+        x.append(imgResize)
+    test_X = list()
+    test_Y = list()
+    for i in range(len(x)):
+        x_t = to_bad_img(x[i] / 255, mask)
+        y_t = np.array(x[i] / 255)
+        # x_t = np.resize(x_t, (1, x_t.shape[0], x_t.shape[1]))
+        # y_t = np.resize(y_t, (1, y_t.shape[0], x_t.shape[1]))
+        if verbose >= 1:
+            print("num {}  ".format(i))
+            test_X.append(x_t)
+            test_Y.append(y_t)
+    test_X = np.concatenate(test_X, 0)
+    test_Y = np.concatenate(test_Y, 0)
+    return [test_X, test_Y]
+
+
 def generate_bigimage(data_path, indx, mask, Subimg_size_x=256, Subimg_size_y=256, overlap_percent=0, verbose=0):
     prefix_Image = r"17782_"
     if verbose >= 1:
