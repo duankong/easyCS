@@ -83,7 +83,7 @@ def args_config_predict():
     # predict config
     parser.add_argument('--test_batch_size', type=int, default=8, help='test batch size ')
     # save
-    parser.add_argument('--save_real', type=boolean_string, default=False, choices=[True, False], help='save the real')
+    parser.add_argument('--save_real', type=boolean_string, default=True, choices=[True, False], help='save the real')
     return parser.parse_args()
 
 

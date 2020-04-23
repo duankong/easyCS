@@ -1,5 +1,5 @@
 from model import FeatureExtractor
-from data import generate_train_test_data, get_mask, get_test_image
+from data import generate_train_test_data, get_mask
 from config import args_config
 from utils import get_para_log, get_model, ssim, get_time
 

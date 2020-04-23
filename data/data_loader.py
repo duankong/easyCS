@@ -10,7 +10,7 @@ import cv2
 import matplotlib.pyplot as plt
 
 
-def generate_train_test_data(data_path, start_num, end_num, mask, testselect=7, verbose=0):
+def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10, verbose=0):
     prefix_Image = r"17782_"
     x = list()
     for i in range(start_num, end_num + 1):
@@ -27,8 +27,8 @@ def generate_train_test_data(data_path, start_num, end_num, mask, testselect=7, 
     for i in range(len(x)):
         x_t = to_bad_img(x[i] / 255, mask)
         y_t = np.array(x[i] / 255)
-        x_t = np.resize(x_t, (1, x_t.shape[0], x_t.shape[1]))
-        y_t = np.resize(y_t, (1, y_t.shape[0], x_t.shape[1]))
+        # x_t = np.resize(x_t, (1, x_t.shape[0], x_t.shape[1]))
+        # y_t = np.resize(y_t, (1, y_t.shape[0], x_t.shape[1]))
         if verbose >= 1:
             print("num {}  ||  mod {} ".format(i, i % testselect))
         if i % testselect > 0:
