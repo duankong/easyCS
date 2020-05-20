@@ -91,8 +91,8 @@ def generate_bigimage(data_path, indx, mask, Subimg_size_x=256, Subimg_size_y=25
 
 
 def to_bad_img(x, mask):
-    gray = (x + 1.) / 2.
-    fft = scipy.fftpack.fft2(gray)
+    # gray = (x + 1.) / 2.
+    fft = scipy.fftpack.fft2(x * 1.0)
     fft = scipy.fftpack.fftshift(fft)
     par_fft = fft * mask
     ifft = scipy.fftpack.ifftshift(par_fft)
@@ -126,4 +126,5 @@ if __name__ == '__main__':
     print('[*] loading mask ... ')
     mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="E:/Desktop/easyCS/data/mask/")
     print('[*] load data ... ')
-    [x, y, a, b] = generate_train_test_data("E:/Desktop/easyCS/data/17782/", 1, 20, mask, verbose=0)
+    [x, y, a, b] = generate_train_test_data(data_path="E:/Desktop/easyCS/data/17782/", start_num=1, end_num=20,
+                                            mask=mask, verbose=0)
