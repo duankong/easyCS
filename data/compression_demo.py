@@ -36,6 +36,15 @@ def read_int(file_data, position):
     j = j | a4
     return j
 
+def read_two_bytes(file_data, position):
+    a1 = file_data[position]
+    a2 = file_data[position + 1]
+    j = 0
+    j = j | a1
+    # j = j << 8
+    # j = j | a2
+    return j
+
 
 def compress(inputfilename, outputfilename):
     """
@@ -45,7 +54,7 @@ def compress(inputfilename, outputfilename):
     """
     # 1. 以二进制的方式打开文件
     # data=np.random.randint(0, 10, (4, 3))
-    data = np.array([1, 5, 2, 32, 23, 21, 2, 1, 5, 1, 5, 5, 5, 5, 5, ])
+    data = np.array([1,2,3,7,7,7,7,7,7,7,7,255])
     data = data.reshape(-1)
 
     # 2. 统计 byte的取值［0-255］ 的每个值出现的频率
@@ -82,7 +91,7 @@ def compress(inputfilename, outputfilename):
     # 4.2  每个值 及其出现的频率的信息
     # 遍历字典 char_freq
     for x in char_freq.keys():
-        # 写入data 两字节
+        # 写入data 一字节
         output.write(x)
         # 读取次数
         temp = char_freq[x]
@@ -147,24 +156,13 @@ def decompress(inputfilename, outputfilename):
     char_freq = {}
     for i in range(leaf_node_size):
         # c = six.byte2int(filedata[4+i*5+0]) # python2.7 version
-        c = filedata[4 + i * 5 + 0]  # python3 vesion
-
+        # c = filedata[4 + i * 5 + 0]  # python3 vesion
+        c=read_two_bytes(file_data=filedata,position=4+i*5+0)
         # 同样的，出现的频率是int型的，读区四个字节来读取到正确的数值
         # python3
-        a1 = filedata[4 + i * 5 + 1]
-        a2 = filedata[4 + i * 5 + 2]
-        a3 = filedata[4 + i * 5 + 3]
-        a4 = filedata[4 + i * 5 + 4]
-        j = 0
-        j = j | a1
-        j = j << 8
-        j = j | a2
-        j = j << 8
-        j = j | a3
-        j = j << 8
-        j = j | a4
+        j=read_int(file_data=filedata,position=4+i*5+1)
         print(c, j)
-        char_freq[c] = j
+        char_freq[six.int2byte(c)] = j
 
     # 3. 重建huffman 编码树，和压缩文件中建立Huffman编码树的方法一致
     list_hufftrees = []
