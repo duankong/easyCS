@@ -398,15 +398,13 @@ if __name__ == '__main__':
     # INPUTFILE： 输入的文件名
     # OUTPUTFILE：输出的文件名
 
-    FLAG = '1'
+    FLAG = '0'
     INPUTFILE = 'E:/Desktop/1.txt'
     OUTPUTFILE = 'E:/Desktop/flag.bin'
-
+    OUTPUTFILE2='E:/Desktop/dd.txt'
     # 压缩文件
-    if FLAG == '0':
-        print('compress file')
-        compress(INPUTFILE, OUTPUTFILE)
-        # 解压缩文件
-    else:
-        print('decompress file')
-        decompress(INPUTFILE, OUTPUTFILE)
+
+    print('compress file')
+    compress(INPUTFILE, OUTPUTFILE)
+    print('decompress file')
+    decompress(OUTPUTFILE,OUTPUTFILE2)

@@ -36,6 +36,7 @@ def read_int(file_data, position):
     j = j | a4
     return j
 
+
 def read_two_bytes(file_data, position):
     a1 = file_data[position]
     a2 = file_data[position + 1]
@@ -46,7 +47,7 @@ def read_two_bytes(file_data, position):
     return j
 
 
-def compress(inputfilename, outputfilename):
+def compress(data, outputfilename):
     """
     压缩文件，参数有
     inputfilename：被压缩的文件的地址和名字
@@ -54,7 +55,7 @@ def compress(inputfilename, outputfilename):
     """
     # 1. 以二进制的方式打开文件
     # data=np.random.randint(0, 10, (4, 3))
-    data = np.array([1,2,3,7,7,7,7,7,7,7,7,255])
+    # data = np.array([1,2,3,7,7,7,7,7,7,7,7,255])
     data = data.reshape(-1)
 
     # 2. 统计 byte的取值［0-255］ 的每个值出现的频率
@@ -157,10 +158,10 @@ def decompress(inputfilename, outputfilename):
     for i in range(leaf_node_size):
         # c = six.byte2int(filedata[4+i*5+0]) # python2.7 version
         # c = filedata[4 + i * 5 + 0]  # python3 vesion
-        c=read_two_bytes(file_data=filedata,position=4+i*5+0)
+        c = read_two_bytes(file_data=filedata, position=4 + i * 5 + 0)
         # 同样的，出现的频率是int型的，读区四个字节来读取到正确的数值
         # python3
-        j=read_int(file_data=filedata,position=4+i*5+1)
+        j = read_int(file_data=filedata, position=4 + i * 5 + 1)
         print(c, j)
         char_freq[six.int2byte(c)] = j
 
@@ -189,8 +190,9 @@ def decompress(inputfilename, outputfilename):
 
         while len(code) > 24:
             if currnode.isleaf():
-                tem_byte = six.int2byte(currnode.get_value())
-                output.write(tem_byte)
+                tem_byte = six.byte2int(currnode.get_value())
+                output.write(bytes(str(tem_byte), encoding='utf-8'))
+                output.write(bytes(six.int2byte(32)))
                 currnode = tem.get_root()
 
             if code[0] == '1':
@@ -211,8 +213,9 @@ def decompress(inputfilename, outputfilename):
 
     while len(code) > 0:
         if currnode.isleaf():
-            tem_byte = six.int2byte(currnode.get_value())
-            output.write(tem_byte)
+            tem_byte = six.byte2int(currnode.get_value())
+            output.write(bytes(str(tem_byte), encoding='utf-8'))
+            output.write(bytes(six.int2byte(32)))
             currnode = tem.get_root()
 
         if code[0] == '1':
@@ -222,8 +225,9 @@ def decompress(inputfilename, outputfilename):
         code = code[1:]
 
     if currnode.isleaf():
-        tem_byte = six.int2byte(currnode.get_value())
-        output.write(tem_byte)
+        tem_byte = six.byte2int(currnode.get_value())
+        output.write(bytes(str(tem_byte), encoding='utf-8'))
+        output.write(bytes(six.int2byte(32)))
         currnode = tem.get_root()
 
     # 4. 关闭文件，解压缩完毕
@@ -242,8 +246,9 @@ if __name__ == '__main__':
     Decompress = 'E:/Desktop/flag.txt'
 
     # 压缩文件
-    # print('compress file')
-    # compress(INPUTFILE, OUTPUTFILE)
+    data = np.array([1, 2, 3, 7, 7, 7, 7, 7, 7, 7,56,8, 7, 255])
+    print('compress file')
+    compress(data=data,outputfilename=OUTPUTFILE)
     # 解压缩文件
     print('decompress file')
     decompress(OUTPUTFILE, Decompress)
