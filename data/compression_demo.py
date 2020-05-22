@@ -2,8 +2,21 @@
 # copyright@zhanggugu
 import six
 import sys
+import numpy as np
 from data import buildHuffmanTree, HuffTree
 
+def write_int(num,file):
+    a4 = num & 255
+    num = num >> 8
+    a3 = num & 255
+    num = num >> 8
+    a2 = num & 255
+    num = num >> 8
+    a1 = num & 255
+    file.write(six.int2byte(a1))
+    file.write(six.int2byte(a2))
+    file.write(six.int2byte(a3))
+    file.write(six.int2byte(a4))
 
 def compress(inputfilename, outputfilename):
     """
@@ -12,17 +25,16 @@ def compress(inputfilename, outputfilename):
     outputfilename：压缩文件的存放地址和名字
     """
     # 1. 以二进制的方式打开文件
-    f = open(inputfilename, 'rb')
-    filedata = f.read()
-    # 获取文件的字节总数
-    filesize = f.tell()
+    # data=np.random.randint(0, 10, (4, 3))
+    data=np.array([1,5,2,32,23,21,2,1,5,1,5,5,5,5,5,])
+    data=data.reshape(-1)
 
     # 2. 统计 byte的取值［0-255］ 的每个值出现的频率
     # 保存在字典 char_freq中
     char_freq = {}
-    for x in range(filesize):
+    for x in np.nditer(data):
         # tem = six.byte2int(filedata[x]) #python2.7 version
-        tem = filedata[x]  # python3.0 version
+        tem = six.int2byte(x)  # python3.0 version
         if tem in char_freq.keys():
             char_freq[tem] = char_freq[tem] + 1
         else:
@@ -46,46 +58,28 @@ def compress(inputfilename, outputfilename):
     output = open(outputfilename, 'wb')
 
     # 一个int型的数有四个字节，所以将其分成四个字节写入到输出文件当中
-    a4 = length & 255
-    length = length >> 8
-    a3 = length & 255
-    length = length >> 8
-    a2 = length & 255
-    length = length >> 8
-    a1 = length & 255
-    output.write(six.int2byte(a1))
-    output.write(six.int2byte(a2))
-    output.write(six.int2byte(a3))
-    output.write(six.int2byte(a4))
+    write_int(length,output)
 
     # 4.2  每个值 及其出现的频率的信息
     # 遍历字典 char_freq
     for x in char_freq.keys():
-        output.write(six.int2byte(x))
-        #
+        # 写入data 两字节
+        output.write(x)
+        # 读取次数
         temp = char_freq[x]
-        # 同样出现的次数 是int型，分成四个字节写入到压缩文件当中
-        a4 = temp & 255
-        temp = temp >> 8
-        a3 = temp & 255
-        temp = temp >> 8
-        a2 = temp & 255
-        temp = temp >> 8
-        a1 = temp & 255
-        output.write(six.int2byte(a1))
-        output.write(six.int2byte(a2))
-        output.write(six.int2byte(a3))
-        output.write(six.int2byte(a4))
-
+        # 分成四个字节写入到压缩文件当中
+        write_int(num=temp,file=output)
+    output.close()
     # 5. 构造huffman编码树，并且获取到每个字符对应的 编码
     tem = buildHuffmanTree(list_hufftrees)
     tem.traverse_huffman_tree(tem.get_root(), '', char_freq)
 
     # 6. 开始对文件进行压缩
+    output = open(outputfilename, 'ab')
     code = ''
-    for i in range(filesize):
+    for element in np.nditer(data):
         # key = six.byte2int(filedata[i]) #python2.7 version
-        key = filedata[i]  # python3 version
+        key = six.int2byte(element)  # python3 version
         code = code + char_freq[key]
         out = 0
         while len(code) > 8:
@@ -255,4 +249,4 @@ if __name__ == '__main__':
         # 解压缩文件
     else:
         print('decompress file')
-        decompress(INPUTFILE, OUTPUTFILE)
+        decompress(OUTPUTFILE, INPUTFILE)
