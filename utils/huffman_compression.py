@@ -398,7 +398,7 @@ if __name__ == '__main__':
     # INPUTFILE： 输入的文件名
     # OUTPUTFILE：输出的文件名
 
-    FLAG = '0'
+    FLAG = '1'
     INPUTFILE = 'E:/Desktop/1.txt'
     OUTPUTFILE = 'E:/Desktop/flag.bin'
 

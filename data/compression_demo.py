@@ -5,7 +5,8 @@ import sys
 import numpy as np
 from data import buildHuffmanTree, HuffTree
 
-def write_int(num,file):
+
+def write_int(num, file_data):
     a4 = num & 255
     num = num >> 8
     a3 = num & 255
@@ -13,10 +14,28 @@ def write_int(num,file):
     a2 = num & 255
     num = num >> 8
     a1 = num & 255
-    file.write(six.int2byte(a1))
-    file.write(six.int2byte(a2))
-    file.write(six.int2byte(a3))
-    file.write(six.int2byte(a4))
+    file_data.write(six.int2byte(a1))
+    file_data.write(six.int2byte(a2))
+    file_data.write(six.int2byte(a3))
+    file_data.write(six.int2byte(a4))
+    return True
+
+
+def read_int(file_data, position):
+    a1 = file_data[position]
+    a2 = file_data[position + 1]
+    a3 = file_data[position + 2]
+    a4 = file_data[position + 3]
+    j = 0
+    j = j | a1
+    j = j << 8
+    j = j | a2
+    j = j << 8
+    j = j | a3
+    j = j << 8
+    j = j | a4
+    return j
+
 
 def compress(inputfilename, outputfilename):
     """
@@ -26,8 +45,8 @@ def compress(inputfilename, outputfilename):
     """
     # 1. 以二进制的方式打开文件
     # data=np.random.randint(0, 10, (4, 3))
-    data=np.array([1,5,2,32,23,21,2,1,5,1,5,5,5,5,5,])
-    data=data.reshape(-1)
+    data = np.array([1, 5, 2, 32, 23, 21, 2, 1, 5, 1, 5, 5, 5, 5, 5, ])
+    data = data.reshape(-1)
 
     # 2. 统计 byte的取值［0-255］ 的每个值出现的频率
     # 保存在字典 char_freq中
@@ -58,7 +77,7 @@ def compress(inputfilename, outputfilename):
     output = open(outputfilename, 'wb')
 
     # 一个int型的数有四个字节，所以将其分成四个字节写入到输出文件当中
-    write_int(length,output)
+    write_int(length, output)
 
     # 4.2  每个值 及其出现的频率的信息
     # 遍历字典 char_freq
@@ -68,7 +87,7 @@ def compress(inputfilename, outputfilename):
         # 读取次数
         temp = char_freq[x]
         # 分成四个字节写入到压缩文件当中
-        write_int(num=temp,file=output)
+        write_int(num=temp, file_data=output)
     output.close()
     # 5. 构造huffman编码树，并且获取到每个字符对应的 编码
     tem = buildHuffmanTree(list_hufftrees)
@@ -118,28 +137,9 @@ def decompress(inputfilename, outputfilename):
     filedata = f.read()
     # 获取文件的字节总数
     filesize = f.tell()
-
     # 1. 读取压缩文件中保存的树的叶节点的个数
     # 一下读取 4个 字节，代表一个int型的值
-    # python2.7 version
-    # a1 = six.byte2int(filedata[0])
-    # a2 = six.byte2int(filedata[1])
-    # a3 = six.byte2int(filedata[2])
-    # a4 = six.byte2int(filedata[3])
-    # python3 version
-    a1 = filedata[0]
-    a2 = filedata[1]
-    a3 = filedata[2]
-    a4 = filedata[3]
-    j = 0
-    j = j | a1
-    j = j << 8
-    j = j | a2
-    j = j << 8
-    j = j | a3
-    j = j << 8
-    j = j | a4
-
+    j = read_int(file_data=filedata, position=0)
     leaf_node_size = j
 
     # 2. 读取压缩文件中保存的相信的原文件中 ［0-255］出现的频率的信息
@@ -241,12 +241,11 @@ if __name__ == '__main__':
     FLAG = '0'
     INPUTFILE = 'E:/Desktop/1.txt'
     OUTPUTFILE = 'E:/Desktop/flag.bin'
+    Decompress = 'E:/Desktop/flag.txt'
 
     # 压缩文件
-    if FLAG == '0':
-        print('compress file')
-        compress(INPUTFILE, OUTPUTFILE)
-        # 解压缩文件
-    else:
-        print('decompress file')
-        decompress(OUTPUTFILE, INPUTFILE)
+    # print('compress file')
+    # compress(INPUTFILE, OUTPUTFILE)
+    # 解压缩文件
+    print('decompress file')
+    decompress(OUTPUTFILE, Decompress)
