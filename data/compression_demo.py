@@ -246,9 +246,9 @@ if __name__ == '__main__':
     Decompress = 'E:/Desktop/flag.txt'
 
     # 压缩文件
-    data = np.array([1, 2, 3, 7, 7, 7, 7, 7, 7, 7,56,8, 7, 255])
+    data = np.array([1, 2, 3, 7, 7, 7, 7, 7, 7, 7, 56, 8, 7, 255])
     print('compress file')
-    compress(data=data,outputfilename=OUTPUTFILE)
+    compress(data=data, outputfilename=OUTPUTFILE)
     # 解压缩文件
     print('decompress file')
     decompress(OUTPUTFILE, Decompress)

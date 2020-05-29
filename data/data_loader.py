@@ -98,7 +98,7 @@ def to_bad_img(x, mask):
     ifft = scipy.fftpack.ifftshift(par_fft)
     x = scipy.fftpack.ifft2(ifft)
     x = np.abs(x)
-    x = x * 2 - 1
+    # x = x * 2 - 1
     return x
 
 

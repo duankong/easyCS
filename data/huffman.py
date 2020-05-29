@@ -135,7 +135,6 @@ class HuffTree(object):
             self.traverse_huffman_tree(root.get_left(), code + '0', char_freq)
             self.traverse_huffman_tree(root.get_right(), code + '1', char_freq)
 
-
 def buildHuffmanTree(list_hufftrees):
     """
     构造huffman树
