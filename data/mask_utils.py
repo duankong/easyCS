@@ -129,13 +129,19 @@ def show_dct_mask(img, mask):
 
 if __name__ == '__main__':
     mask_name = "gaussian2d", "gaussian1d", "poisson2d"
-    mask_perc = 1, 5, 10, 20, 30, 40, 50
+    mask_perc = [1, 5, 10, 20, 30, 40, 50]
     mask = list()
-    for i, mask_perc in enumerate(mask_perc):
-        mask.append(get_mask(mask_name[0], mask_perc, mask_path="mask", verbose=0))
-
+    for i, mask_indx in enumerate(mask_perc):
+        mask.append(get_mask(mask_name[0], mask_indx, mask_path="mask", verbose=0))
+    # data
     img = cv2.imread(os.path.join("17782", r"17782_" + "%05d.tif" % 1), cv2.IMREAD_GRAYSCALE)
     img = cv2.imread("lena.jpg")
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
     imgResize = cv2.resize(img, (256, 256), interpolation=cv2.INTER_CUBIC)
-    show_dct_mask(imgResize-128, mask[6])
+    # show
+    show_dct_mask(imgResize - 128, mask[6])
+    show_fft_mask(imgResize, mask[0])
+    # show mask detail
+    for i, mask_temp in enumerate(mask):
+        sum = np.sum(mask_temp) / 256 / 256 * 100
+        print('[#] mask {} is {}%'.format(mask_perc[i], sum))
