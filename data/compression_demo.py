@@ -3,7 +3,8 @@
 import six
 import sys
 import numpy as np
-from data import buildHuffmanTree, HuffTree
+# from data import buildHuffmanTree, HuffTree
+from huffman import buildHuffmanTree,HuffTree
 
 
 def write_int(num, file_data):
@@ -252,3 +253,4 @@ if __name__ == '__main__':
     # 解压缩文件
     print('decompress file')
     decompress(OUTPUTFILE, Decompress)
+    print('[*] Done!')    
