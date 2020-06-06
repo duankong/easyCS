@@ -37,10 +37,10 @@ def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10,
         else:
             test_X.append(x_t)
             test_Y.append(y_t)
-    train_X = np.concatenate(train_X, 0)
-    train_Y = np.concatenate(train_Y, 0)
-    test_X = np.concatenate(test_X, 0)
-    test_Y = np.concatenate(test_Y, 0)
+    train_X = np.stack(train_X, axis=0)
+    train_Y = np.stack(train_Y, axis=0)
+    test_X = np.stack(test_X, axis=0)
+    test_Y = np.stack(test_Y, axis=0)
     return [train_X, train_Y, test_X, test_Y]
 
 
