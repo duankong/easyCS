@@ -11,7 +11,8 @@ from tensorboardX import SummaryWriter
 import torchvision
 
 import numpy as np
-import os, time
+import os
+import time
 from torchsummary import summary
 import skimage.metrics
 
@@ -27,7 +28,8 @@ def main_train():
         file.write(get_para_log(args))
     # ==================================== PREPARE DATA ==================================== #
     print('[*] loading mask ... ')
-    mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="data/mask")
+    mask = get_mask(mask_name=args.maskname,
+                    mask_perc=args.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
     [x_train, y_train, x_test, y_test] = generate_train_test_data(args.data_path, args.data_star_num, args.data_end_num,
                                                                   mask, testselect=10, verbose=0)
@@ -40,9 +42,11 @@ def main_train():
     y_test = torch.from_numpy(y_test[:]).float().unsqueeze(1)
 
     if torch.cuda.is_available():
-        x_train, y_train, x_test, y_test = x_train.cuda(), y_train.cuda(), x_test.cuda(), y_test.cuda()
+        x_train, y_train, x_test, y_test = x_train.cuda(
+        ), y_train.cuda(), x_test.cuda(), y_test.cuda()
         print('[*] ====> Running on GPU <==== [*]')
-    print("x_data shape is [{}],y_data shape is [{}]".format(x_train.shape, y_train.shape))
+    print("x_data shape is [{}],y_data shape is [{}]".format(
+        x_train.shape, y_train.shape))
 
     train_loader = Data.DataLoader(dataset=Data.TensorDataset(x_train, y_train), batch_size=args.batch_size,
                                    shuffle=True)
@@ -54,7 +58,8 @@ def main_train():
     # ==================================== DEFINE MODEL ==================================== #
     print('[*] define model ... ')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    my_net_G = get_model(model_name=args.model, n_channels=args.img_n_channels, n_classes=args.img_n_classes)
+    my_net_G = get_model(
+        model_name=args.model, n_channels=args.img_n_channels, n_classes=args.img_n_classes)
     demo_input = torch.rand(1, 1, 256, 256)
     writer.add_graph(my_net_G, input_to_model=demo_input)
     my_net_G.to(device)
@@ -83,7 +88,8 @@ def main_train():
         summary(my_net_G, input_size=(1, args.img_size_x, args.img_size_y))
     # ==================================== DEFINE TRAIN OPTS ==================================== #
     print('[*] define training options ... ')
-    optimizer_G = optim.Adam(my_net_G.parameters(), lr=args.lr)  # optimize all net parameters
+    # optimize all net parameters
+    optimizer_G = optim.Adam(my_net_G.parameters(), lr=args.lr)
     # ==================================== DEFINE LOSS ==================================== #
     print('[*] define loss functions ... ')
     loss_mse = nn.MSELoss()
@@ -94,7 +100,8 @@ def main_train():
     for epoch in range(start_epoch, args.epochs):
         for step, (train_x, train_y) in enumerate(
                 train_loader):  # gives batch data, normalize x when iterate train_loader
-            iter_num = (epoch) * len(train_loader) * args.batch_size + step * args.batch_size
+            iter_num = (epoch) * len(train_loader) * \
+                       args.batch_size + step * args.batch_size
             optimizer_G.zero_grad()  # clear gradients for this training step
             # Generate a batch of images
             g_img = my_net_G(train_x)  # get output
@@ -120,33 +127,42 @@ def main_train():
                 mse_num = skimage.metrics.mean_squared_error(
                     y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
                 log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
-                                                                               (step + 1) * args.batch_size,
+                                                                               (step + 1) *
+                                                                               args.batch_size,
                                                                                len(train_loader) * args.batch_size)
                 # TensorboardX log and print in command line
-                ## Train total loss
-                writer.add_scalar("train_loss", g_loss.cpu().data.numpy(), iter_num)
-                log += " || TRAIN [loss: {:.6f}]".format(g_loss.cpu().data.numpy())
-                ## Train detail loss
-                writer.add_scalar("train/MSE_loss", loss_g_mse.cpu().data.numpy(), iter_num)
+                # Train total loss
+                writer.add_scalar(
+                    "train_loss", g_loss.cpu().data.numpy(), iter_num)
+                log += " || TRAIN [loss: {:.6f}]".format(
+                    g_loss.cpu().data.numpy())
+                # Train detail loss
+                writer.add_scalar("train/MSE_loss",
+                                  loss_g_mse.cpu().data.numpy(), iter_num)
                 log += " [MSE: {:.6f}]".format(loss_g_mse.cpu().data.numpy())
                 if args.loss_mse_only == False and args.loss_ssim == True:
-                    writer.add_scalar("train/SSIM_loss", loss_g_ssim.cpu().data.numpy(), iter_num)
-                    log += "  [SSIM: {:.4f}]".format(loss_g_ssim.cpu().data.numpy())
+                    writer.add_scalar("train/SSIM_loss",
+                                      loss_g_ssim.cpu().data.numpy(), iter_num)
+                    log += "  [SSIM: {:.4f}]".format(
+                        loss_g_ssim.cpu().data.numpy())
                 if args.loss_mse_only == False and args.loss_vgg == True:
-                    writer.add_scalar("train/VGG_loss", loss_g_vgg.cpu().data.numpy(), iter_num)
-                    log += "  [VGG: {:.4f}]".format(loss_g_vgg.cpu().data.numpy())
-                ## Test loss
+                    writer.add_scalar("train/VGG_loss",
+                                      loss_g_vgg.cpu().data.numpy(), iter_num)
+                    log += "  [VGG: {:.4f}]".format(
+                        loss_g_vgg.cpu().data.numpy())
+                # Test loss
                 writer.add_scalar("test/test_MSE", mse_num, iter_num)
                 log += " || TEST [MSE: {:.4f}]".format(mse_num)
                 writer.add_scalar("test/test_PSNR", psnr_num, iter_num)
                 log += " [PSNR: {:.4f}]".format(psnr_num)
-                ## time caculate
+                # time caculate
                 use_time = time.time() - start_time
                 ave_time = use_time / (
-                            (epoch - start_epoch) * len(train_loader) * args.batch_size + (step + 1) * args.batch_size)
+                        (epoch - start_epoch) * len(train_loader) * args.batch_size + (step + 1) * args.batch_size)
                 resttime = ave_time * ((args.epochs - epoch) * len(train_loader) * args.batch_size + len(
                     train_loader) * args.batch_size - (step + 1) * args.batch_size)
-                log += "  || Use time :{} Rest time :{}".format(get_time(use_time), get_time(resttime))
+                log += "  || Use time :{} Rest time :{}".format(
+                    get_time(use_time), get_time(resttime))
                 print(log)
 
             if g_loss.cpu().data.numpy() < best_loss and step % 20 == 0 and args.model_save:
@@ -160,7 +176,8 @@ def main_train():
                 if not os.path.isdir('checkpoint'):
                     os.mkdir('checkpoint')
                 torch.save(state, './checkpoint/' + args.model_name)
-                print("[*] Save checkpoints SUCCESS! || loss= {:.5f} epoch= {:03d}".format(best_loss, epoch + 1))
+                print(
+                    "[*] Save checkpoints SUCCESS! || loss= {:.5f} epoch= {:03d}".format(best_loss, epoch + 1))
         # show test every epoch
         img_grid = torchvision.utils.make_grid(test_output, nrow=5)
         writer.add_image('img_epoch', img_grid, global_step=epoch)
@@ -170,7 +187,12 @@ def main_train():
         log += "=" * 40 + "\n"
         file.write(log)
     print("[*] train Done !")
+    
 
 
 if __name__ == '__main__':
     main_train()
+    
+    
+    
+    

@@ -7,23 +7,33 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft2, ifft, ifftshift
+import pywt
 
 
-def get_random_0_1(wide, high, percent=0.01):
+def scale_img(img, size):
+    imgResize = img
+    if not img.shape[0] == size:
+        imgResize = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
+    return imgResize
+
+
+def get_random_0_1(wide, high, mycent):
     nums = np.zeros(wide * high)
-    nums[:int(wide * high * percent)] = 1
+    nums[:int(wide * high * mycent)] = 1
     np.random.shuffle(nums)
     nums = nums.reshape(wide, high)
     return nums
 
 
-def get_random_0_1_left_right(wide, high, len):
+def get_random_0_1_left_right(wide, high, mycent):
+    len = int(mycent * wide)
     nums = np.zeros([wide, high])
     nums[0:len, 0:len] = 1
     return nums
 
 
-def get_random_0_1_centre(wide, high, len):
+def get_random_0_1_centre(wide, high, mycent):
+    len = int(mycent * wide)
     nums = np.zeros([wide, high])
     a = int(wide / 2) - int(len / 2)
     b = int(wide / 2) + int(len / 2)
@@ -37,45 +47,42 @@ def get_random_0_1_centre(wide, high, len):
 def show_compress_data(mycent, img):
     myarrayfft = get_random_0_1_centre(img.shape[0], img.shape[1], mycent)
     myarraydct = get_random_0_1_left_right(img.shape[0], img.shape[1], mycent)
+    myarraydwt = get_random_0_1_left_right(img.shape[0], img.shape[1], mycent)
     # FFT
     fft0 = scipy.fftpack.fft2(img)
     fft0 = scipy.fftpack.fftshift(fft0)
     fft = fft0 * myarrayfft
-    fft_show = np.log(abs(fft))  # 进行log处理
+    fft_show = np.log(abs(fft0)) * myarrayfft  # 进行log处理
+    # fft_show[fft_show <= 0] = 255
     ifft = scipy.fftpack.ifftshift(fft)
     img_recor1 = scipy.fftpack.ifft2(ifft)
     img_recor1 = np.abs(img_recor1)
     # DCT
     img_dct = cv2.dct(img) * myarraydct  # 进行离散余弦变换
-    img_dct_log = np.log(abs(img_dct))  # 进行log处理
+    img_dct_log = np.log(abs(cv2.dct(img))) * myarraydct  # 进行log处理
+    # img_dct_log[img_dct_log <= 0] = 255
     img_recor2 = cv2.idct(img_dct)  # 进行离散余弦反变换
+    # DWT
+    coeffs = pywt.wavedecn(img, 'haar', level=2)
+    arr, coeff_slices = pywt.coeffs_to_array(coeffs)
+    coeffs_from_arr = pywt.array_to_coeffs(arr * myarraydwt, coeff_slices, output_format='wavedecn')
+    arr_show=(arr)*myarraydwt
+    # arr_show[arr_show <= 0] = 255
+    idwt = pywt.waverecn(coeffs_from_arr, 'haar')
+
     # PLOT
-    plt.subplot(231)
-    plt.imshow(img, 'gray')
-    plt.title('original image')
-    plt.xticks([]), plt.yticks([])
+    plt.figure("demo")
+    plt.subplot(331), plt.imshow(img, 'gray'), plt.title('original image')
+    plt.subplot(332), plt.imshow(fft_show, 'gray'), plt.title('FFT')
+    plt.subplot(333), plt.imshow(img_recor1, 'gray'), plt.title('IFFT')
 
-    plt.subplot(232)
-    plt.imshow(fft_show)
-    plt.title('FFT')
-    plt.xticks([]), plt.yticks([])
+    plt.subplot(334), plt.imshow(img, 'gray'), plt.title('original image')
+    plt.subplot(335), plt.imshow(img_dct_log, 'gray'), plt.title('DCT')
+    plt.subplot(336), plt.imshow(img_recor2, 'gray'), plt.title('IDCT')
 
-    plt.subplot(233)
-    plt.imshow(img_recor1, 'gray')
-    plt.title('IFFT')
-    plt.xticks([]), plt.yticks([])
-
-    plt.subplot(234)
-    plt.imshow(img, 'gray')
-    plt.title('original image')
-
-    plt.subplot(235)
-    plt.imshow(img_dct_log)
-    plt.title('DCT(cv2_dct)')
-
-    plt.subplot(236)
-    plt.imshow(img_recor2, 'gray')
-    plt.title('IDCT(cv2_idct)')
+    plt.subplot(337), plt.imshow(img, 'gray'), plt.title('original image')
+    plt.subplot(338), plt.imshow(arr_show, 'gray'), plt.title('DWT')
+    plt.subplot(339), plt.imshow(idwt, 'gray'), plt.title('IDWT')
 
     plt.show()
 
@@ -85,14 +92,16 @@ if __name__ == '__main__':
     img = cv2.imread('E:/Desktop/easyCS/data/limotiff/6.tif', 0)
     img = img.astype('float')
 
-    # img = cv2.imread("E:/Desktop/easyCS/data/limotiff/lena.jpg")
-    # img1 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.floa
-    # t32)
-
+    img = cv2.imread("E:/Desktop/easyCS/data/limotiff/lena.jpg")
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY).astype(np.float32)
+    sizeinfo = [512, 256, 128, 64]
     # para
-    mycent_num = 30
+    mycent_num = 1
     # show
-    show_compress_data(img=img, mycent=mycent_num)
+    for i, size_ in enumerate(sizeinfo):
+        print(size_)
+        imgResize = scale_img(img, size=size_)
+        show_compress_data(img=imgResize, mycent=mycent_num)
 
-    print('[*] 百分比是 {:.2f}'.format(mycent_num / img.shape[0] * 100))
+    print('[*] 百分比是 {:.2f}'.format(mycent_num * 100))
     print('[*] Done')
