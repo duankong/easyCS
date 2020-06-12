@@ -3,8 +3,8 @@
 import six
 import sys
 import numpy as np
-# from data import buildHuffmanTree, HuffTree
-from huffman import buildHuffmanTree,HuffTree
+from data import buildHuffmanTree, HuffTree
+# from huffman import buildHuffmanTree,HuffTree
 
 
 def write_int(num, file_data):
