@@ -7,43 +7,8 @@ import numpy as np
 import scipy
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft2, ifft, ifftshift
-import pywt
 
-
-def scale_img(img, size):
-    imgResize = img
-    if not img.shape[0] == size:
-        imgResize = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
-    return imgResize
-
-
-def get_random_0_1(wide, high, mycent):
-    nums = np.zeros(wide * high)
-    nums[:int(wide * high * mycent)] = 1
-    np.random.shuffle(nums)
-    nums = nums.reshape(wide, high)
-    return nums
-
-
-def get_random_0_1_left_right(wide, high, mycent):
-    len = int(np.ceil(mycent * wide))
-    nums = np.zeros([wide, high])
-    nums[0:len, 0:len] = 1
-    print('mycent is {} len is {}'.format(mycent, len))
-    return nums
-
-
-def get_random_0_1_centre(wide, high, mycent):
-    len = int(np.ceil(mycent * wide))
-    nums = np.zeros([wide, high])
-    a = int(wide / 2) - int(len / 2)
-    b = int(wide / 2) + int(len / 2)
-    c = int(high / 2) - int(len / 2)
-    d = int(high / 2) + int(len / 2)
-
-    nums[a:b, c:d] = 1
-    print('mycent is {} len is {}'.format(mycent, len))
-    return nums
+from utils import get_random_0_1_left_right,get_random_0_1_centre,scale_img
 
 
 def show_compress_data(mycent, img):
