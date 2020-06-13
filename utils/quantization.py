@@ -8,48 +8,45 @@ import scipy
 import matplotlib.pyplot as plt
 from scipy.fftpack import fft2, ifft, ifftshift
 
-from utils import get_random_0_1_left_right,get_random_0_1_centre,scale_img
+from utils import get_random_0_1_left_right, get_random_0_1_centre, scale_img
 
 
-def show_compress_data(mycent, img):
-    myarrayfft = get_random_0_1_centre(img.shape[0], img.shape[1], mycent)
-    myarraydct = get_random_0_1_left_right(img.shape[0], img.shape[1], mycent)
-    # myarraydwt = get_random_0_1_left_right(img.shape[0], img.shape[1], mycent)
-    # FFT
+
+def dct_comp(img, mycent):
+    array_dct = get_random_0_1_left_right(img.shape[0], img.shape[1], mycent)
+    img_dct = cv2.dct(img) * array_dct  # 进行离散余弦变换
+    img_dct_log = np.log(abs(cv2.dct(img))) * array_dct  # 进行log处理
+    dct_record = cv2.idct(img_dct)  # 进行离散余弦反变换
+    return img_dct_log, dct_record
+
+
+def fft_cmp(img, mycent):
+    array_fft = get_random_0_1_centre(img.shape[0], img.shape[1], mycent)
     fft0 = scipy.fftpack.fft2(img)
     fft0 = scipy.fftpack.fftshift(fft0)
-    fft = fft0 * myarrayfft
-    fft_show = np.log(abs(fft0)) * myarrayfft  # 进行log处理
-    # fft_show[fft_show <= 0] = 255
-    ifft = scipy.fftpack.ifftshift(fft)
-    img_recor1 = scipy.fftpack.ifft2(ifft)
-    img_recor1 = np.abs(img_recor1)
-    # DCT
-    img_dct = cv2.dct(img) * myarraydct  # 进行离散余弦变换
-    img_dct_log = np.log(abs(cv2.dct(img))) * myarraydct  # 进行log处理
-    # img_dct_log[img_dct_log <= 0] = 255
-    img_recor2 = cv2.idct(img_dct)  # 进行离散余弦反变换
-    # DWT
-    # coeffs = pywt.wavedecn(img, 'haar', level=2)
-    # arr, coeff_slices = pywt.coeffs_to_array(coeffs)
-    # coeffs_from_arr = pywt.array_to_coeffs(arr * myarraydwt, coeff_slices, output_format='wavedecn')
-    # arr_show = (arr) * myarraydwt
-    # # arr_show[arr_show <= 0] = 255
-    # idwt = pywt.waverecn(coeffs_from_arr, 'haar')
+    fft = fft0 * array_fft
 
+    fft_show = np.log(abs(fft0)) * array_fft  # 进行log处理
+    ifft = scipy.fftpack.ifftshift(fft)
+    fft_record = scipy.fftpack.ifft2(ifft)
+    fft_record = np.abs(fft_record)
+    return fft_show, fft_record
+
+
+def Uniform_quantization(img,delta):
+    return 0
+
+
+def show_compress_data(img, fft_show, dct_record, dct_log, fft_record):
     # PLOT
     plt.figure()
     plt.subplot(231), plt.imshow(img, 'gray'), plt.title('original image'), plt.axis('off')
     plt.subplot(232), plt.imshow(fft_show, 'gray'), plt.title('FFT'), plt.axis('off')
-    plt.subplot(233), plt.imshow(img_recor1, 'gray'), plt.title('IFFT')
+    plt.subplot(233), plt.imshow(dct_record, 'gray'), plt.title('IFFT')
 
     plt.subplot(234), plt.imshow(img, 'gray'), plt.title('original image'), plt.axis('off')
-    plt.subplot(235), plt.imshow(img_dct_log, 'gray'), plt.title('DCT'), plt.axis('off')
-    plt.subplot(236), plt.imshow(img_recor2, 'gray'), plt.title('IDCT')
-
-    # plt.subplot(337), plt.imshow(img, 'gray'), plt.title('original image')
-    # plt.subplot(338), plt.imshow(arr_show, 'gray'), plt.title('DWT')
-    # plt.subplot(339), plt.imshow(idwt, 'gray'), plt.title('IDWT')
+    plt.subplot(235), plt.imshow(dct_log, 'gray'), plt.title('DCT'), plt.axis('off')
+    plt.subplot(236), plt.imshow(fft_record, 'gray'), plt.title('IDCT')
 
     plt.show()
 
@@ -76,7 +73,7 @@ if __name__ == '__main__':
         for j, mycent_ in enumerate(mycent_num):
             print(size_)
             imgResize = scale_img(img, size=size_)
-            show_compress_data(img=imgResize, mycent=mycent_)
+            show_compress_data(img=imgResize)
 
     # print('[*] 百分比是 {:.2f}'.format(mycent_num * 100))
     print('[*] Done')
