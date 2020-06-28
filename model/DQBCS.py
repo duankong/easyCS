@@ -23,8 +23,8 @@ class DQBCS(nn.Module):
         measure = self.Sample(input)
         quantized = measure / step
 
-        offset = self.Offset(quantized)
-        dequantized = quantized * (step + offset)
+        offset = self.Offset(quantized)+step
+        dequantized = quantized * offset
         output = self.Reconstruction(dequantized)
 
         return output
@@ -98,12 +98,15 @@ class ResBlock(nn.Module):
 if __name__ == '__main__':
     in_channel = 1
     out_channel = 1
-    width = 256
-    my_net = DQBCS(in_channels=in_channel, out_channels=out_channel)
+    width = 128
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+    my_net = DQBCS(in_channels=in_channel, out_channels=out_channel).to(device)
 
     summary(my_net, input_size=(in_channel, width, width))
-    
-    img = torch.rand(1, in_channel, width, width)
+
+    img = torch.rand(1, in_channel, width, width).to(device)
 
     result = my_net(img)
     print('input shape is : {}'.format(img.shape))
