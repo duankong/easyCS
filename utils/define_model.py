@@ -1,4 +1,4 @@
-from model import UNet, NestedUNet, UNet_res, UNet_conv, ESS_net
+from model import UNet, NestedUNet, UNet_res, UNet_conv, ESS_net, DQBCS
 
 
 def get_model(model_name, n_channels, n_classes):
@@ -13,6 +13,8 @@ def get_model(model_name, n_channels, n_classes):
         net = UNet_conv(n_channels=n_channels, n_classes=n_classes, bilinear=True, Measure_return=False)
     elif model_name == "Essnet":
         net = ESS_net(in_channels=n_channels, out_channels=n_classes)
+    elif model_name == "DQBCS":
+        net = DQBCS(in_channels=n_channels, out_channels=n_classes)
     else:
         return 0
     return net
