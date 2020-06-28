@@ -4,17 +4,30 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from config import args_config
+from torchsummary import summary
 
 B = 32
 Nb = 6
 Recon_filter = 64
+step = 32
+
 
 class DQBCS(nn.Module):
-    def __init__(self,in_channels, out_channels):
-        super(DQBCS,self).__init__()
+    def __init__(self, in_channels, out_channels):
+        super(DQBCS, self).__init__()
+        self.Sample = Sample_subNetwork(in_channels, Nb)
+        self.Offset = Offset_subNetwork(Nb, Nb)
+        self.Reconstruction = Reconstruction_subNetwork(Nb, out_channels)
 
     def forward(self, input):
-        return None
+        measure = self.Sample(input)
+        quantized = measure / step
+
+        offset = self.Offset(quantized)
+        dequantized = quantized * (step + offset)
+        output = self.Reconstruction(dequantized)
+
+        return output
 
 
 class Sample_subNetwork(nn.Module):
@@ -83,4 +96,15 @@ class ResBlock(nn.Module):
 
 
 if __name__ == '__main__':
-    pass
+    in_channel = 1
+    out_channel = 1
+    width = 256
+    my_net = DQBCS(in_channels=in_channel, out_channels=out_channel)
+
+    summary(my_net, input_size=(in_channel, width, width))
+    
+    img = torch.rand(1, in_channel, width, width)
+
+    result = my_net(img)
+    print('input shape is : {}'.format(img.shape))
+    print('out shape is :{}'.format(result.shape))
