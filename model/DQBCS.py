@@ -7,6 +7,9 @@ from config import args_config
 
 B = 32
 Nb = 6
+Recon_filter = 64
+
+
 
 
 class Sample_subNetwork(nn.Module):
@@ -36,6 +39,20 @@ class Offset_subNetwork(nn.Module):
         output = x2 + input
         return output
 
+
+class Reconstruction_subNetwork(nn.Module):
+    def __init__(self, in_channels, out_channels=1):
+        super(Reconstruction_subNetwork, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels=Recon_filter, kernel_size=7)
+        self.RB = ResBlock(in_channels=Recon_filter, out_channels=Recon_filter)
+        self.conv2 = nn.Conv2d(in_channels=Recon_filter, out_channels=out_channels, kernel_size=7)
+
+    def forward(self, input):
+        x = self.conv1(input)
+        for i in range(5):
+            x = self.RB(x)
+        output = self.conv2(x)
+        return output
 
 
 class ResBlock(nn.Module):
