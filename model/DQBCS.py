@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from config import args_config
 
 B = 32
+Nb = 6
 
 
 class Sample_subNetwork(nn.Module):
@@ -17,12 +18,24 @@ class Sample_subNetwork(nn.Module):
         x = self.conv(input)
         return x
 
+
 class Offset_subNetwork(nn.Module):
-    def __init__(self,in_channels,out_channels):
-        super(Offset_subNetwork,self).__init__()
+    def __init__(self, in_channels, out_channels, kernel_size=3, stride=1):
+        super(Offset_subNetwork, self).__init__()
+        self.conv1 = nn.Conv2d(in_channels, out_channels=Nb, kernel_size=kernel_size, stride=stride, padding=1)
+        self.RB = ResBlock(in_channels=Nb, out_channels=out_channels)
 
     def forward(self, input):
-        return None
+        x = input
+        x1 = self.conv1(x)
+        rb1 = self.RB(x1)
+        rb2 = self.RB(rb1)
+        rb3 = self.RB(rb2)
+        rb4 = self.RB(rb3)
+        x2 = self.conv1(rb4)
+        output = x2 + input
+        return output
+
 
 
 class ResBlock(nn.Module):
