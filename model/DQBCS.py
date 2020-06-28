@@ -2,14 +2,15 @@
 # Cui, Wenxue, et al. “An Efficient Deep Quantized Compressed Sensing Coding Framework of Natural Images.” MM 2018 - Proceedings of the 2018 ACM Multimedia Conference, 2018, pp. 1777–85, doi:10.1145/3240508.3240706.
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-from config import args_config
+import numpy as np
+
 from torchsummary import summary
 
 B = 32
-Nb = 6
+rate = 0.02
+Nb = int(np.floor(rate * B * B))
 Recon_filter = 64
-step = 32
+step = 12
 
 
 class DQBCS(nn.Module):
@@ -23,7 +24,7 @@ class DQBCS(nn.Module):
         measure = self.Sample(input)
         quantized = measure / step
 
-        offset = self.Offset(quantized)+step
+        offset = self.Offset(quantized) + step
         dequantized = quantized * offset
         output = self.Reconstruction(dequantized)
 
@@ -61,12 +62,16 @@ class Offset_subNetwork(nn.Module):
 class Reconstruction_subNetwork(nn.Module):
     def __init__(self, in_channels, out_channels=1):
         super(Reconstruction_subNetwork, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels=Recon_filter, kernel_size=7)
+        self.conv0 = nn.Conv2d(in_channels, out_channels=B * B, kernel_size=1)
+        self.Shuffle = nn.PixelShuffle(B)
+        self.conv1 = nn.Conv2d(in_channels=1, out_channels=Recon_filter, kernel_size=7, padding=3)
         self.RB = ResBlock(in_channels=Recon_filter, out_channels=Recon_filter)
-        self.conv2 = nn.Conv2d(in_channels=Recon_filter, out_channels=out_channels, kernel_size=7)
+        self.conv2 = nn.Conv2d(in_channels=Recon_filter, out_channels=out_channels, kernel_size=7, padding=3)
 
     def forward(self, input):
-        x = self.conv1(input)
+        x = self.conv0(input)
+        x = self.Shuffle(x)
+        x = self.conv1(x)
         for i in range(5):
             x = self.RB(x)
         output = self.conv2(x)
@@ -84,12 +89,9 @@ class ResBlock(nn.Module):
         x = input
         x = self.conv1(x)
         x = self.bn(x)
-
         x = self.Relu(x)
-
         x = self.conv1(x)
         x = self.bn(x)
-
         x = x + input
         output = self.Relu(x)
         return output
