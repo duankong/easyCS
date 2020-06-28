@@ -9,7 +9,12 @@ B = 32
 Nb = 6
 Recon_filter = 64
 
+class DQBCS(nn.Module):
+    def __init__(self,in_channels, out_channels):
+        super(DQBCS,self).__init__()
 
+    def forward(self, input):
+        return None
 
 
 class Sample_subNetwork(nn.Module):
