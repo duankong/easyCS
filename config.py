@@ -44,7 +44,7 @@ def args_config():
     parser.add_argument('--beta', type=float, default=0.0025, help='beta = 0.0025')
     # train config
     parser.add_argument('--epochs', type=int, default=100, help='train epoch ')  # [**]
-    parser.add_argument('--lr', type=float, default=1e-2, help='initial learning rate')  # [**]
+    parser.add_argument('--lr', type=float, default=1e-1, help='initial learning rate')  # [**]
     parser.add_argument('--batch_size', type=int, default=2, help='train batch size ')
     # global parameter
     parser.add_argument('--test_model', type=boolean_string, default=True, choices=[True, False],
