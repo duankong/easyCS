@@ -95,6 +95,7 @@ def main_train():
     print('[*] define loss functions ... ')
     loss_mse = nn.MSELoss()
     vgg_Feature_model = FeatureExtractor().to(device)
+    R=torch.randn(args.batch_size,20,8,8).to(device)
     # ==================================== TRAINING ==================================== #
     print('[*] start training ... ')
     start_time = time.time()
@@ -105,11 +106,12 @@ def main_train():
                        args.batch_size + step * args.batch_size
             optimizer_G.zero_grad()  # clear gradients for this training step
             # Generate a batch of images
-            g_img = my_net_G(train_x)  # get output
+            measure,g_img = my_net_G(train_x)  # get output
             # Loss measures generator's ability to fool the discriminator
             loss_g_mse = loss_mse(g_img, train_y)
+            loss_g_rate=loss_mse(measure,R)
             if args.loss_mse_only == True:
-                g_loss = loss_g_mse
+                g_loss = loss_g_mse+0.1*loss_g_rate
             else:
                 g_loss = args.alpha * loss_g_mse
                 if args.loss_ssim == True:
@@ -120,9 +122,10 @@ def main_train():
                     g_loss += args.beta * loss_g_vgg
             g_loss.backward()  # backpropagation, compute gradients
             optimizer_G.step()  # apply gradients
+
             if step % 2 == 0:
                 with torch.no_grad():
-                    test_output = my_net_G(x_test)
+                    measure,test_output = my_net_G(x_test)
                 psnr_num = skimage.metrics.peak_signal_noise_ratio(
                     y_test.cpu().data.numpy(), test_output.cpu().data.numpy())
                 mse_num = skimage.metrics.mean_squared_error(

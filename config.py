@@ -33,7 +33,7 @@ def args_config():
     parser.add_argument('--maskperc', type=int, default=10, choices=[1, 5, 10, 20, 30, 40, 50],
                         help='1,5,10,20,30,40,50')  # [**]
     # loss
-    parser.add_argument('--loss_mse_only', type=boolean_string, default=False, choices=[True, False],
+    parser.add_argument('--loss_mse_only', type=boolean_string, default=True, choices=[True, False],
                         help='Only use Mse as the loss')
     parser.add_argument('--loss_ssim', type=boolean_string, default=True, choices=[True, False],
                         help='add SSIM into the loss')
@@ -45,7 +45,7 @@ def args_config():
     # train config
     parser.add_argument('--epochs', type=int, default=100, help='train epoch ')  # [**]
     parser.add_argument('--lr', type=float, default=1e-2, help='initial learning rate')  # [**]
-    parser.add_argument('--batch_size', type=int, default=8, help='train batch size ')
+    parser.add_argument('--batch_size', type=int, default=2, help='train batch size ')
     # global parameter
     parser.add_argument('--test_model', type=boolean_string, default=True, choices=[True, False],
                         help='change the feature map for test model')

@@ -40,7 +40,7 @@ class DQBCS(nn.Module):
         dequantized = quantized * offset
         output = self.Reconstruction(dequantized)
 
-        return output
+        return measure,output
 
 
 class Sample_subNetwork(nn.Module):
