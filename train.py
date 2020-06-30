@@ -33,8 +33,9 @@ def main_train():
     print('[*] load data ... ')
     [x_train, y_train, x_test, y_test] = generate_train_test_data(args.data_path, args.data_star_num, args.data_end_num,
                                                                   mask, testselect=10, verbose=0)
-    if args.model == "Unet_conv":
+    if args.model == "Unet_conv" or args.model=="DQBCS":
         x_train = y_train
+        print("[****] tips x_train == y_train")
 
     x_train = torch.from_numpy(x_train[:]).float().unsqueeze(1)
     y_train = torch.from_numpy(y_train[:]).float().unsqueeze(1)

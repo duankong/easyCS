@@ -14,7 +14,7 @@ if args_.test_model == True:
     B = 32
     rate = 0.02
     Nb = int(np.floor(rate * B * B))
-    Recon_filter = 12
+    Recon_filter = 24
     step = 12
 else:
     B = 32
