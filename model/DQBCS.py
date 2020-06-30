@@ -3,14 +3,26 @@
 import torch
 import torch.nn as nn
 import numpy as np
-
 from torchsummary import summary
 
-B = 32
-rate = 0.02
-Nb = int(np.floor(rate * B * B))
-Recon_filter = 64
-step = 12
+from config import args_config
+
+
+args_ = args_config()
+
+if args_.test_model == True:
+    B = 32
+    rate = 0.02
+    Nb = int(np.floor(rate * B * B))
+    Recon_filter = 12
+    step = 12
+else:
+    B = 32
+    rate = 0.02
+    Nb = int(np.floor(rate * B * B))
+    Recon_filter = 64
+    step = 12
+
 
 
 class DQBCS(nn.Module):
@@ -100,7 +112,7 @@ class ResBlock(nn.Module):
 if __name__ == '__main__':
     in_channel = 1
     out_channel = 1
-    width = 128
+    width = 256
 
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 

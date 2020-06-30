@@ -10,14 +10,14 @@ def boolean_string(s):
 def args_config():
     parser = argparse.ArgumentParser(description='train demo')
     # model
-    parser.add_argument('--model', type=str, default='Essnet',
-                        choices=['Unet', 'nestedUnet', 'Unet_res', 'Unet_conv', 'Essnet'],
+    parser.add_argument('--model', type=str, default='DQBCS',
+                        choices=['Unet', 'nestedUnet', 'Unet_res', 'Unet_conv', 'Essnet','DQBCS'],
                         help='the model name：Unet nestedUnet Unet_res Unet_conv Essnet')  # [**]
-    parser.add_argument('--model_name', type=str, default='Essnet_test4.t7', help='the model name')  # [**]
-    parser.add_argument('--model_log', type=str, default='Essnet_test4', help='the model log file for check')  # [**]
+    parser.add_argument('--model_name', type=str, default='DQBCS_test0.t7', help='the model name')  # [**]
+    parser.add_argument('--model_log', type=str, default='DQBCS_test0', help='the model log file for check')  # [**]
     parser.add_argument('--model_save', type=boolean_string, default=False, choices=[True, False],
                         help='the model is save or not')
-    parser.add_argument('--model_show', type=boolean_string, default=False, choices=[True, False],
+    parser.add_argument('--model_show', type=boolean_string, default=True, choices=[True, False],
                         help='the model is show  or not')
     parser.add_argument('--img_n_channels', type=int, default=1, help='the input data channels')
     parser.add_argument('--img_n_classes', type=int, default=1, help='the ouput data classes')
