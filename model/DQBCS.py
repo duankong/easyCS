@@ -12,16 +12,16 @@ args_ = args_config()
 
 if args_.test_model == True:
     B = 32
-    rate = 0.02
+    rate = 0.05
     Nb = int(np.floor(rate * B * B))
-    Recon_filter = 24
-    step = 12
+    Recon_filter = 32
+    step = 0.1
 else:
     B = 32
     rate = 0.02
     Nb = int(np.floor(rate * B * B))
     Recon_filter = 64
-    step = 12
+    step = 0.0001
 
 
 
@@ -122,6 +122,6 @@ if __name__ == '__main__':
 
     img = torch.rand(1, in_channel, width, width).to(device)
 
-    result = my_net(img)
+    measure,result = my_net(img)
     print('input shape is : {}'.format(img.shape))
     print('out shape is :{}'.format(result.shape))

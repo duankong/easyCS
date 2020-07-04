@@ -95,7 +95,7 @@ def main_train():
     print('[*] define loss functions ... ')
     loss_mse = nn.MSELoss()
     vgg_Feature_model = FeatureExtractor().to(device)
-    R=torch.randn(args.batch_size,20,8,8).to(device)
+    R=torch.randn(args.batch_size,51,8,8).to(device)
     # ==================================== TRAINING ==================================== #
     print('[*] start training ... ')
     start_time = time.time()
@@ -109,9 +109,10 @@ def main_train():
             measure,g_img = my_net_G(train_x)  # get output
             # Loss measures generator's ability to fool the discriminator
             loss_g_mse = loss_mse(g_img, train_y)
-            loss_g_rate=loss_mse(measure,R)
+            # loss_g_rate=loss_mse(measure,R)
             if args.loss_mse_only == True:
-                g_loss = loss_g_mse+0.1*loss_g_rate
+                # g_loss = loss_g_mse+0.1*loss_g_rate
+                g_loss = loss_g_mse
             else:
                 g_loss = args.alpha * loss_g_mse
                 if args.loss_ssim == True:
