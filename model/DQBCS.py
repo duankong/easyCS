@@ -21,7 +21,7 @@ else:
     rate = args_.DQBCS_rate
     Nb = int(np.floor(rate * B * B))
     Recon_filter = 64
-    step = 0.0001
+    step = 0.1
 
 
 
