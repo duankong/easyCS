@@ -8,7 +8,7 @@ def get_para_log(args_):
     log += "[*] Time is " + time.asctime(time.localtime(time.time())) + "\n"
     log += "\n[*] Model\n\n"
     log += "Model name:\t{}\n".format(args_.model)
-    log += "Model save:\t{}\n".format(args_.model_name)
+    log += "Model save:\t{}\n".format(args_.model_checkpoint)
     log += "Model log :\t{}\n".format(args_.model_log)
     log += "Model show    ={} || save   ={}\n".format(args_.model_show, args_.model_save)
     log += "Model channels={:1d} || classes={:1d}\n".format(args_.img_n_channels, args_.img_n_classes)
@@ -22,7 +22,11 @@ def get_para_log(args_):
     log += "MSE_only={}\tSSIM={}\tVGG={}\n".format(args_.loss_mse_only, args_.loss_ssim, args_.loss_vgg)
     log += "alpha(MSE)={}\tgamma(SSIM)={}\tbeta(VGG)={}\n".format(args_.alpha, args_.gamma, args_.beta)
     log += "\n[*] Train\n\n"
-    log += "epochs={}\tlr={}\tbatch_size={}\ttest_model={}\n\n".format(args_.epochs, args_.lr, args_.batch_size,args_.test_model)
+    log += "epochs={}\tlr={}\tbatch_size={}\ttest_model={}\n\n".format(args_.epochs, args_.lr, args_.batch_size,
+                                                                       args_.test_model)
+    if args_.model == "DQBCS":
+        log += "\n[*] DQBCS para\n\n"
+        log += "Net sample rate={}\n".format(args_.DQBCS_rate)
     return log
 
 

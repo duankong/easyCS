@@ -13,7 +13,7 @@ def args_config():
     parser.add_argument('--model', type=str, default='DQBCS',
                         choices=['Unet', 'nestedUnet', 'Unet_res', 'Unet_conv', 'Essnet','DQBCS'],
                         help='the model name：Unet nestedUnet Unet_res Unet_conv Essnet')  # [**]
-    parser.add_argument('--model_name', type=str, default='DQBCS_test1.t7', help='the model name')  # [**]
+    parser.add_argument('--model_checkpoint', type=str, default='DQBCS_test1.t7', help='the model name')  # [**]
     parser.add_argument('--model_log', type=str, default='DQBCS_test1', help='the model log file for check')  # [**]
     parser.add_argument('--model_save', type=boolean_string, default=False, choices=[True, False],
                         help='the model is save or not')
@@ -49,6 +49,8 @@ def args_config():
     # global parameter
     parser.add_argument('--test_model', type=boolean_string, default=True, choices=[True, False],
                         help='change the feature map for test model')
+    # DQBCS
+    parser.add_argument('--DQBCS_rate',type=float,default=0.05,help="change the sample rate")
 
     return parser.parse_args()
 

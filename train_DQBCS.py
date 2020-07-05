@@ -60,27 +60,27 @@ def main_train():
     print('[*] define model ... ')
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     my_net_G = get_model(
-        model_name=args.model, n_channels=args.img_n_channels, n_classes=args.img_n_classes)
+        model=args.model, n_channels=args.img_n_channels, n_classes=args.img_n_classes)
     demo_input = torch.rand(1, 1, 256, 256)
     writer.add_graph(my_net_G, input_to_model=demo_input)
     my_net_G.to(device)
     print('[*] Try resume from checkpoint')
     if os.path.isdir('checkpoint'):
         try:
-            checkpoint = torch.load('./checkpoint/' + args.model_name)
+            checkpoint = torch.load('./checkpoint/' + args.model_checkpoint)
             print('==> Load last checkpoint data')
 
             my_net_G.load_state_dict(checkpoint['state'])  # 从字典中依次读取
             start_epoch = checkpoint['epoch']
             best_loss = checkpoint['best_loss']
-            print("==> Loaded checkpoint '{}' (trained for {} epochs,the best loss is {:.6f})".format(args.model_name,
+            print("==> Loaded checkpoint '{}' (trained for {} epochs,the best loss is {:.6f})".format(args.model_checkpoint,
                                                                                                       checkpoint[
                                                                                                           'epoch'],
                                                                                                       best_loss))
         except FileNotFoundError:
             start_epoch = 0
             best_loss = 10
-            print('==> Can\'t found ' + args.model_name)
+            print('==> Can\'t found ' + args.model_checkpoint)
     else:
         start_epoch = 0
         best_loss = np.inf
@@ -180,7 +180,7 @@ def main_train():
                 }
                 if not os.path.isdir('checkpoint'):
                     os.mkdir('checkpoint')
-                torch.save(state, './checkpoint/' + args.model_name)
+                torch.save(state, './checkpoint/' + args.model_checkpoint)
                 print(
                     "[*] Save checkpoints SUCCESS! || loss= {:.5f} epoch= {:03d}".format(best_loss, epoch + 1))
         # show test every epoch
