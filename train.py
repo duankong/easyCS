@@ -33,7 +33,7 @@ def main_train():
     print('[*] load data ... ')
     [x_train, y_train, x_test, y_test] = generate_train_test_data(args.data_path, args.data_star_num, args.data_end_num,
                                                                   mask, testselect=10, verbose=0)
-    if args.model == "Unet_conv" or args.model=="DQBCS":
+    if args.model == "Unet_conv" or args.model == "DQBCS":
         x_train = y_train
         print("[****] tips x_train == y_train")
 
@@ -73,10 +73,11 @@ def main_train():
             my_net_G.load_state_dict(checkpoint['state'])  # 从字典中依次读取
             start_epoch = checkpoint['epoch']
             best_loss = checkpoint['best_loss']
-            print("==> Loaded checkpoint '{}' (trained for {} epochs,the best loss is {:.6f})".format(args.model_checkpoint,
-                                                                                                      checkpoint[
-                                                                                                          'epoch'],
-                                                                                                      best_loss))
+            print("==> Loaded checkpoint '{}' (trained for {} epochs,the best loss is {:.6f})".format(
+                args.model_checkpoint,
+                checkpoint[
+                    'epoch'],
+                best_loss))
         except FileNotFoundError:
             start_epoch = 0
             best_loss = 10
@@ -105,7 +106,10 @@ def main_train():
                        args.batch_size + step * args.batch_size
             optimizer_G.zero_grad()  # clear gradients for this training step
             # Generate a batch of images
-            g_img = my_net_G(train_x)  # get output
+            if args.model == "DQBCS":
+                measure, g_img = my_net_G(train_x)  # get output
+            else:
+                g_img = my_net_G(train_x)
             # Loss measures generator's ability to fool the discriminator
             loss_g_mse = loss_mse(g_img, train_y)
             if args.loss_mse_only == True:
@@ -120,13 +124,20 @@ def main_train():
                     g_loss += args.beta * loss_g_vgg
             g_loss.backward()  # backpropagation, compute gradients
             optimizer_G.step()  # apply gradients
+
             if step % 2 == 0:
                 with torch.no_grad():
-                    test_output = my_net_G(x_test)
-                psnr_num = skimage.metrics.peak_signal_noise_ratio(
-                    y_test.cpu().data.numpy(), test_output.cpu().data.numpy())
-                mse_num = skimage.metrics.mean_squared_error(
-                    y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
+                    if args.model == "DQBCS":
+                        measure, test_output = my_net_G(x_test)
+                    else:
+                        test_output = my_net_G(x_test)
+                if device == "gpu":
+                    y_test = y_test.cpu()
+                    test_output = test_output.cpu()
+                y_test=np.array(y_test)
+                test_output = test_output.numpy()
+                psnr_num = skimage.metrics.peak_signal_noise_ratio(y_test, test_output)
+                mse_num = skimage.metrics.mean_squared_error(y_test * 255, test_output * 255)
                 log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
                                                                                (step + 1) *
                                                                                args.batch_size,
@@ -182,18 +193,13 @@ def main_train():
         # show test every epoch
         img_grid = torchvision.utils.make_grid(test_output, nrow=5)
         writer.add_image('img_epoch', img_grid, global_step=epoch)
-    writer.close()
+        writer.close()
     with open(para_data, "a") as file:
         log = "[*] Time is " + time.asctime(time.localtime(time.time())) + "\n"
         log += "=" * 40 + "\n"
         file.write(log)
-    print("[*] train Done !")
-    
+    print("[ ] train Done !")
 
 
 if __name__ == '__main__':
     main_train()
-    
-    
-    
-    
