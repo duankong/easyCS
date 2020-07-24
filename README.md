@@ -3,15 +3,20 @@ simple compressive sensing with Unet
 
 - [x] Spare
   
-  FFT 
+  - FFT 
+  - DCT 
+  - DWT
   
 - [x] MEASURE
   
-  ['gaussian1d', 'gaussian2d', 'poisson2d']
+   - Gaussian1d || Gaussian2d || Poisson2d
+   - Adaption Layer
   
 - [x] Reconsitution
 
-  ['Unet', 'nestedUnet', 'Unet_res', 'Unet_conv', 'Essnet']
+    - **Unet   || NestedUnet || Essnet**
+    
+   - **EssGAN || DQBCS**
  
  
 
