@@ -24,7 +24,7 @@ def args_config():
     # train data
     parser.add_argument('--data_path', type=str, default='./data/17782/', help='data path')
     parser.add_argument('--data_star_num', type=int, default=1, help='the first pic num')  # [**]
-    parser.add_argument('--data_end_num', type=int, default=101, help='the end pic num')  # [**]
+    parser.add_argument('--data_end_num', type=int, default=30, help='the end pic num')  # [**]
     parser.add_argument('--img_size_x', type=int, default=256, help='the input data size x(row)')
     parser.add_argument('--img_size_y', type=int, default=256, help='the input data size y(col)')
     # mask
@@ -43,7 +43,7 @@ def args_config():
     parser.add_argument('--gamma', type=float, default=0.1, help='gamma = 0.1')
     parser.add_argument('--beta', type=float, default=0.0025, help='beta = 0.0025')
     # train config
-    parser.add_argument('--epochs', type=int, default=100, help='train epoch ')  # [**]
+    parser.add_argument('--epochs', type=int, default=10, help='train epoch ')  # [**]
     parser.add_argument('--lr', type=float, default=1e-3, help='initial learning rate')  # [**]
     parser.add_argument('--batch_size', type=int, default=4, help='train batch size ')
     # global parameter
