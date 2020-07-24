@@ -131,13 +131,10 @@ def main_train():
                         measure, test_output = my_net_G(x_test)
                     else:
                         test_output = my_net_G(x_test)
-                if device == "gpu":
-                    y_test = y_test.cpu()
-                    test_output = test_output.cpu()
-                y_test=np.array(y_test)
-                test_output = test_output.numpy()
-                psnr_num = skimage.metrics.peak_signal_noise_ratio(y_test, test_output)
-                mse_num = skimage.metrics.mean_squared_error(y_test * 255, test_output * 255)
+                psnr_num = skimage.metrics.peak_signal_noise_ratio(
+                    y_test.cpu().data.numpy(), test_output.cpu().data.numpy())
+                mse_num = skimage.metrics.mean_squared_error(
+                    y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
                 log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
                                                                                (step + 1) *
                                                                                args.batch_size,
@@ -193,7 +190,7 @@ def main_train():
         # show test every epoch
         img_grid = torchvision.utils.make_grid(test_output, nrow=5)
         writer.add_image('img_epoch', img_grid, global_step=epoch)
-        writer.close()
+    writer.close()
     with open(para_data, "a") as file:
         log = "[*] Time is " + time.asctime(time.localtime(time.time())) + "\n"
         log += "=" * 40 + "\n"
@@ -203,3 +200,6 @@ def main_train():
 
 if __name__ == '__main__':
     main_train()
+
+
+
