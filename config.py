@@ -51,6 +51,7 @@ def args_config():
                         help='change the feature map for test model')
     # DQBCS
     parser.add_argument('--DQBCS_rate',type=float,default=0.05,help="change the sample rate")
+    parser.add_argument('--DQBCS_step',type=float,default=0.1,help="change the DQBCS step")
 
     return parser.parse_args()
 
