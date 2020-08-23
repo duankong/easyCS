@@ -15,13 +15,13 @@ if args_.test_model == True:
     rate = args_.DQBCS_rate
     Nb = int(np.floor(rate * B * B))
     Recon_filter = 16
-    step = 0.1
+    step = args_.DQBCS_step
 else:
     B = 32
     rate = args_.DQBCS_rate
     Nb = int(np.floor(rate * B * B))
     Recon_filter = 64
-    step = 0.1
+    step = args_.DQBCS_step
 
 
 
