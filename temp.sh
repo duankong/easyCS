@@ -7,4 +7,4 @@ D:/anconda3/python.exe -u  G:/lxb/desktop/easyCS/train_DQBCS.py \
 --maskname poisson2d --maskperc  5  \
 --epochs 60 --lr 1e-3 --batch_size 4 \
 --loss_mse_only True --loss_ssim False --loss_vgg False \
---DQBCS_rate 0.05\
+--DQBCS_rate 0.05
