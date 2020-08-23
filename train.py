@@ -14,7 +14,7 @@ import numpy as np
 import os
 import time
 from torchsummary import summary
-import skimage.metrics
+import skimage.measure
 
 
 def main_train():
@@ -131,9 +131,9 @@ def main_train():
                         measure, test_output = my_net_G(x_test)
                     else:
                         test_output = my_net_G(x_test)
-                psnr_num = skimage.metrics.peak_signal_noise_ratio(
+                psnr_num = skimage.measure.compare_psnr(
                     y_test.cpu().data.numpy(), test_output.cpu().data.numpy())
-                mse_num = skimage.metrics.mean_squared_error(
+                mse_num = skimage.measure.compare_mse(
                     y_test.cpu().data.numpy() * 255, test_output.cpu().data.numpy() * 255)
                 log = "[**] Epoch [{:02d}/{:02d}] Step [{:04d}/{:04d}]".format(epoch + 1, args.epochs,
                                                                                (step + 1) *
@@ -200,6 +200,3 @@ def main_train():
 
 if __name__ == '__main__':
     main_train()
-
-
-
