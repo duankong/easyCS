@@ -1,26 +1,29 @@
-from model import FeatureExtractor
-from data import generate_train_test_data, get_mask
-from config import args_config
-from utils import get_para_log, get_model, ssim, get_time
+import numpy as np
+import os
+import time
+import skimage.measure
 
 import torch
 import torch.nn as nn
 from torch import optim
 import torch.utils.data as Data
-from tensorboardX import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 import torchvision
 
-import numpy as np
-import os
-import time
-from torchsummary import summary
-import skimage.measure
+from model import FeatureExtractor
+from data import generate_train_test_data_DCT, generate_train_test_data_NONE,
+from config import args_config
+from utils import get_para_log, get_model, ssim, get_time
+from utils.mask_utils import get_mask
+
+args = args_config()
+os.environ["CUDA_VISIBLE_DEVICES"] = '{}'.format(args.use_cuda_num)
 
 
 def main_train():
     # =================================== BASIC CONFIGS =================================== #
     print('[*] run basic configs ... ')
-    args = args_config()
+
     writer = SummaryWriter(os.path.join("runs/", args.model_log))
     # write para into a text
     para_data = os.path.join("runs/", args.model_log) + "/para_data.txt"
@@ -31,18 +34,23 @@ def main_train():
     mask = get_mask(mask_name=args.maskname,
                     mask_perc=args.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
-    [x_train, y_train, x_test, y_test] = generate_train_test_data(args.data_path, args.data_star_num, args.data_end_num,
-                                                                  mask, testselect=10, verbose=0)
+
     if args.model == "Unet_conv" or args.model == "DQBCS":
-        x_train = y_train
-        print("[****] tips x_train == y_train")
+        [x_train, y_train, x_test, y_test] = generate_train_test_data_NONE(args.data_path, args.data_star_num,
+                                                                           args.data_end_num,
+                                                                           testselect=10, verbose=0)
+        print("[===] tips x_train == y_train")
+    else:
+        [x_train, y_train, x_test, y_test] = generate_train_test_data_DCT(args.data_path, args.data_star_num,
+                                                                          args.data_end_num, mask, testselect=10,
+                                                                          verbose=0)
 
     x_train = torch.from_numpy(x_train[:]).float().unsqueeze(1)
     y_train = torch.from_numpy(y_train[:]).float().unsqueeze(1)
     x_test = torch.from_numpy(x_test[:]).float().unsqueeze(1)
     y_test = torch.from_numpy(y_test[:]).float().unsqueeze(1)
 
-    if torch.cuda.is_available():
+    if torch.cuda.is_available() and args.use_cuda:
         x_train, y_train, x_test, y_test = x_train.cuda(
         ), y_train.cuda(), x_test.cuda(), y_test.cuda()
         print('[*] ====> Running on GPU <==== [*]')
@@ -58,7 +66,7 @@ def main_train():
     writer.add_image('img_test/input', img_grid_x)
     # ==================================== DEFINE MODEL ==================================== #
     print('[*] define model ... ')
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() and args.use_cuda else 'cpu')
     my_net_G = get_model(
         model=args.model, n_channels=args.img_n_channels, n_classes=args.img_n_classes)
     demo_input = torch.rand(1, 1, 256, 256)
@@ -87,7 +95,8 @@ def main_train():
         best_loss = np.inf
         print('==> Start from scratch')
     if args.model_show:
-        summary(my_net_G, input_size=(1, args.img_size_x, args.img_size_y))
+        # summary(my_net_G, input_size=(1, args.img_size_x, args.img_size_y))
+        pass
     # ==================================== DEFINE TRAIN OPTS ==================================== #
     print('[*] define training options ... ')
     # optimize all net parameters

@@ -2,11 +2,10 @@
 # Cui, Wenxue, et al. “An Efficient Deep Quantized Compressed Sensing Coding Framework of Natural Images.” MM 2018 - Proceedings of the 2018 ACM Multimedia Conference, 2018, pp. 1777–85, doi:10.1145/3240508.3240706.
 import torch
 import torch.nn as nn
+
 import numpy as np
-from torchsummary import summary
 
 from config import args_config
-
 
 args_ = args_config()
 
@@ -14,7 +13,7 @@ if args_.test_model == True:
     B = 32
     rate = args_.DQBCS_rate
     Nb = int(np.floor(rate * B * B))
-    Recon_filter = 16
+    Recon_filter = 8
     step = args_.DQBCS_step
 else:
     B = 32
@@ -22,7 +21,6 @@ else:
     Nb = int(np.floor(rate * B * B))
     Recon_filter = 64
     step = args_.DQBCS_step
-
 
 
 class DQBCS(nn.Module):
@@ -40,7 +38,7 @@ class DQBCS(nn.Module):
         dequantized = quantized * offset
         output = self.Reconstruction(dequantized)
 
-        return measure,output
+        return measure, output
 
 
 class Sample_subNetwork(nn.Module):
@@ -118,10 +116,10 @@ if __name__ == '__main__':
 
     my_net = DQBCS(in_channels=in_channel, out_channels=out_channel).to(device)
 
-    summary(my_net, input_size=(in_channel, width, width))
+    # summary(my_net, input_size=(in_channel, width, width))
 
     img = torch.rand(1, in_channel, width, width).to(device)
 
-    measure,result = my_net(img)
+    measure, result = my_net(img)
     print('input shape is : {}'.format(img.shape))
     print('out shape is :{}'.format(result.shape))

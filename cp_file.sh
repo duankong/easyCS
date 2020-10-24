@@ -21,7 +21,7 @@ mkdir $2
       echo "[.]$1/$file"
       if [ -d $1"/"$file ]
       then
-        if [[ `echo $file | grep -e __pycache__` ]]||[[ `echo $file | grep -e checkpoint` ]]||[[ `echo $file | grep -e 17782` ]]||[[ `echo $file | grep -e runs` ]]
+        if [[ `echo $file | grep -e __pycache__` ]]||[[ `echo $file | grep -e checkpoint` ]]||[[ `echo $file | grep -e 17782` ]]||[[ `echo $file | grep -e runs` ]]||[[ `echo $file | grep -e temp.sh` ]]
         then
           continue
           else
@@ -30,7 +30,7 @@ mkdir $2
       e $1"/"$file $2"/"$file
       else
         cp $1/$file $2/$file
-        echo "[=]$1/$file"
+        echo "[=]$2/$file"
       fi
     done
   }

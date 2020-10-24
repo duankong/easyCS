@@ -1,16 +1,14 @@
-from data.mask_utils import get_mask
-from config import args_config_predict
+from utils.mask_utils import get_mask
 from config import args_config
-from data import get_Blocks, assembleBlocks
+from data import get_Blocks
 
 import os
 import numpy as np
 import scipy
 import cv2
-import matplotlib.pyplot as plt
 
 
-def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10, verbose=0):
+def generate_train_test_data_DCT(data_path, start_num, end_num, mask, testselect=10, verbose=0):
     prefix_Image = r"17782_"
     x = list()
     for i in range(start_num, end_num + 1):
@@ -41,6 +39,34 @@ def generate_train_test_data(data_path, start_num, end_num, mask, testselect=10,
     train_Y = np.stack(train_Y, axis=0)
     test_X = np.stack(test_X, axis=0)
     test_Y = np.stack(test_Y, axis=0)
+    return [train_X, train_Y, test_X, test_Y]
+
+
+def generate_train_test_data_NONE(data_path, start_num, end_num, testselect=10, verbose=0):
+    prefix_Image = r"17782_"
+    x = list()
+    for i in range(start_num, end_num + 1):
+        if verbose >= 1:
+            print("[@data_loader] {} is loading".format(os.path.join(data_path, prefix_Image + "%05d.tif" % i)))
+        width = height = 256
+        img = cv2.imread(os.path.join(data_path, prefix_Image + "%05d.tif" % i), cv2.IMREAD_GRAYSCALE)
+        imgResize = cv2.resize(img, (width, height), interpolation=cv2.INTER_CUBIC)
+        x.append(imgResize)
+    train_X = list()
+    test_X = list()
+    for i in range(len(x)):
+        x_t = np.array(x[i] / 255.)
+        # x_t = np.resize(x_t, (1, x_t.shape[0], x_t.shape[1]))
+        if verbose >= 1:
+            print("num {}  ||  mod {} ".format(i, i % testselect))
+        if i % testselect > 0:
+            train_X.append(x_t)
+        else:
+            test_X.append(x_t)
+    train_X = np.stack(train_X, axis=0)
+    test_X = np.stack(test_X, axis=0)
+    train_Y = train_X
+    test_Y = test_X
     return [train_X, train_Y, test_X, test_Y]
 
 
@@ -91,14 +117,14 @@ def generate_bigimage(data_path, indx, mask, Subimg_size_x=256, Subimg_size_y=25
 
 
 def to_bad_img(x, mask):
-    # gray = (x + 1.) / 2.
-    fft = scipy.fftpack.fft2(x * 1.0)
+    gray = (x + 1.) / 2.
+    fft = scipy.fftpack.fft2(gray * 1.0)
     fft = scipy.fftpack.fftshift(fft)
     par_fft = fft * mask
     ifft = scipy.fftpack.ifftshift(par_fft)
     x = scipy.fftpack.ifft2(ifft)
     x = np.abs(x)
-    # x = x * 2 - 1
+    x = x * 2 - 1
     return x
 
 

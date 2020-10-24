@@ -5,13 +5,13 @@ from skimage import io
 import cv2
 
 if __name__ == '__main__':
-    img_2 = cv2.imread('./lena.jpg', cv2.IMREAD_GRAYSCALE)
+    img_2 = cv2.imread('./limotiff/lena.jpg', cv2.IMREAD_GRAYSCALE)
     cv2.namedWindow("Image")
     cv2.imshow("Image", img_2)
     data = np.squeeze(img_2)
     Subimg_size_x = 32
     Subimg_size_y = 65
-    overlap_percent = 7
+    overlap_percent = 12
     Image_size_x, Image_size_y = 256, 256
     blocks = get_Blocks(data, Subimg_size_x, Subimg_size_y, overlap_percent, verbose=1)
     fix_img = assembleBlocks(blocks, Image_size_x, Image_size_y, Subimg_size_x, Subimg_size_y, overlap_percent)

@@ -1,7 +1,6 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchsummary import summary
 from config import args_config
 
 args_ = args_config()
@@ -173,7 +172,6 @@ if __name__ == '__main__':
     out_channel = 1
     width = 256
     my_net = ESS_net(in_channels=in_channel, out_channels=out_channel)
-    summary(my_net, input_size=(in_channel, width, width))
     img = torch.rand(1, in_channel, width, width)
     result = my_net(img)
     print('input shape is : {}'.format(img.shape))

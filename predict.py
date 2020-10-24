@@ -1,14 +1,15 @@
 from model import unet
-from data import generate_train_test_data, get_mask
+from data import get_mask,generate_train_test_data
 from config import args_config_predict
+import numpy as np
+import cv2
+import os
+
+os.environ["CUDA_VISIBLE_DEVICES"] = '2,3'
 
 import torch
 from torchsummary import summary
 import torch.utils.data as Data
-
-import numpy as np
-import os
-import cv2
 
 
 def predict_img_sequence():
@@ -19,7 +20,7 @@ def predict_img_sequence():
     print('[*] loading mask ... ')
     mask = get_mask(mask_name=args.maskname, mask_perc=args.maskperc, mask_path="data/mask")
     print('[*] load data ... ')
-    [x, y] = generate_traindata(args.test_path, args.test_star_num, args.test_end_num, mask=mask, verbose=0)
+    [x, y] = generate_train_test_data(args.test_path, args.test_star_num, args.test_end_num, mask=mask, verbose=0)
     x_data = torch.from_numpy(x[:]).float().unsqueeze(1)
     y_data = torch.from_numpy(y[:]).float().unsqueeze(1)
     if torch.cuda.is_available():
